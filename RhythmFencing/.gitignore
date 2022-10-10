@@ -9,6 +9,12 @@
 /[Bb]uilds/
 /[Ll]ogs/
 /[Mm]emoryCaptures/
+/[Aa]ssets/[Oo]culus
+
+# Ignore these Oculus files because they store your secret App ID
+Assets/Resources/OvrAvatarSettings.asset
+Assets/Resources/OculusPlatformSettings.asset
+Assets/Resources/OculusPlatformSettings.asset.meta
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta
