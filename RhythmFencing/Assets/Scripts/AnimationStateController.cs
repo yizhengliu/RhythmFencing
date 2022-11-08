@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AnimationStateController : MonoBehaviour
 {
-    Animator animator;
+    private Animator animator;
 
     // Start is called before the first frame update
     void Start()
@@ -19,8 +19,9 @@ public class AnimationStateController : MonoBehaviour
         //if the z coordi is reached
         if (animationInfo.IsName("Sword And Shield Run"))
         {
-            if (transform.position.z < 3)
+            if (Vector3.Distance(transform.position, Vector3.zero) < 3) 
                 animator.SetBool("StartAttack", true);
+                
         }
         else if (animationInfo.IsName("Sword And Shield Slash")) {
             if (animationInfo.normalizedTime > 1.0f) {
