@@ -697,8 +697,9 @@ MonoBehaviour:
   - {fileID: 1909229801}
   - {fileID: 1913049837}
   - {fileID: 2019141489}
-  beat: 0.5714286
-  enemiesToSpawn: 0
+  SAMPLES_PER_POINT: 1024
+  SCALE: 300
+  TOLERANCE: 2.78
 --- !u!82 &680266902
 AudioSource:
   m_ObjectHideFlags: 0
@@ -710,7 +711,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 8432c96bf61388a4da73c1df1c051ba7, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
