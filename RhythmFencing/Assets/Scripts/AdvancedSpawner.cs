@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+#if UNITY_EDITOR
 using UnityEngine;
+#endif
 
 public class AdvancedSpawner : MonoBehaviour
 {
@@ -24,7 +26,7 @@ public class AdvancedSpawner : MonoBehaviour
         public bool isSimplified = false;
         public bool isBeat = false;
         public Vector2 position;
-        public string ToPoint(bool head) {
+        public string printPoint(bool head) {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
             if (head == true)
             {
@@ -57,8 +59,11 @@ public class AdvancedSpawner : MonoBehaviour
     private struct Song {
         public List<Point> pointsInSong;
     }
-
-    private float[] timing;
+    private struct Beat {
+        public float timing;
+        public int behaviour;
+    }
+    private Beat[] beats;
     private int counter = 0;
     private Song currentSong;
     private float timer = 0;
@@ -67,74 +72,54 @@ public class AdvancedSpawner : MonoBehaviour
     void Start()
     {
         currentAudio = GetComponent<AudioSource>();
-        //-------------------------manually pop beat information
-        //setupManually();
-        //------------------------------------------------------
-        //automatically beat detection
-        float[] samples = new float[currentAudio.clip.samples * currentAudio.clip.channels];
-        //get the data into the samples array from start point 0
-        currentAudio.clip.GetData(samples, 0);
-        currentSong.pointsInSong = new List<Point>();
-        //make sure pre set the capacity of the array so that system dont need to allocate 
-        //memory dynamically which could cause the speed goes down
-        currentSong.pointsInSong.Capacity = (int)(samples.Length / (float) SAMPLES_PER_POINT + 1);
-        int indexCounter = 0;
-        for (int i = 0; i < samples.Length; i += SAMPLES_PER_POINT) {
-            Point point = new Point();
-            point.index = indexCounter++;
-            point.startFromSample = i;
-            //if i + 1023 <= samples.length - 1, means it would get out of the bound
-            if (i + SAMPLES_PER_POINT <= samples.Length)
-                point.finishAtSample = i + SAMPLES_PER_POINT - 1;
-            else
-                point.finishAtSample = samples.Length - 1;
-            //frequency indicates how many samples per second actually in the song,
-            //the equation in the bracket cauculates 
-            point.timeInSong = (point.startFromSample /
-                (float) currentAudio.clip.channels) / (float) currentAudio.clip.frequency;
-            float energySum = 0;
-            for (int j = point.startFromSample; j <= point.finishAtSample; j += currentAudio.clip.channels) {
-                int temp = currentAudio.clip.channels - 1;
-                float sum = 0;
-                while (temp >= 0) {
-                    //if we got two channels then plus them 
-                    sum += samples[j + temp];
-                    temp--;
-                }
-                energySum += sum / (float) currentAudio.clip.channels;
-            }
-            point.energy = Mathf.Abs((energySum / SAMPLES_PER_POINT) * SCALE);
-            point.position = new Vector2(point.timeInSong, point.energy);
-            currentSong.pointsInSong.Add(point);
-        }
+        initializeSong();
         toSimpleLine();
         findUpBeat();
         writeResult();
-        Point[] beats = currentSong.pointsInSong.Where(x => x.isBeat == true).ToArray();
-        timing = new float[beats.Length];
-        for (int i = 0; i< timing.Length; i++)
-        {
-            timing[i] = beats[i].timeInSong;
-        }
-        currentAudio.Play();
+        addToBeats();
+        //currentAudio.Play();
     }
 
     // Update is called once per frame
     void Update()
     {
+        
         timer += Time.deltaTime;
-        if (!currentAudio.isPlaying) {
-            if (timer > 7.05)
+        if (!currentAudio.isPlaying)
+        {
+            if (timer > 5.987f)
                 currentAudio.Play();
         }
         spawn();
     }
 
+    private void addToBeats() {
+        Point[] upBeats = currentSong.pointsInSong.Where(x => x.isBeat == true).ToArray();
+        beats = new Beat[upBeats.Length];
+        //type 0: 5770
+        //type 1: 5987
+        //type 2: 5220
+        for (int i = 0; i < beats.Length; i++){
+            beats[i].behaviour = Random.Range(0, 3);
+            switch (beats[i].behaviour) {
+                case 0:
+                    beats[i].timing = upBeats[i].timeInSong + 0.217f;
+                    break;
+                case 1:
+                    beats[i].timing = upBeats[i].timeInSong;
+                    break;
+                case 2:
+                    beats[i].timing = upBeats[i].timeInSong + 0.767f;
+                    break;
+            }
+            
+        }
+    }
+
     private void findUpBeat() {
         Point[] potentialBeats = currentSong.pointsInSong.Where(x => x.isSimplified == true).ToArray();
         for (int i = 0; i < potentialBeats.Length; i++) {
-            if (i == 0)
-            {
+            if (i == 0){
                 if (potentialBeats[i].energy > potentialBeats[i + 1].energy)
                     currentSong.pointsInSong[potentialBeats[i].index].isBeat = true;
             }
@@ -142,7 +127,7 @@ public class AdvancedSpawner : MonoBehaviour
                 if (potentialBeats[i].energy > potentialBeats[i - 1].energy)
                     currentSong.pointsInSong[potentialBeats[i].index].isBeat = true;
             }
-            else { 
+            else {
                 if (potentialBeats[i].energy > potentialBeats[i - 1].energy &&
                     potentialBeats[i].energy > potentialBeats[i + 1].energy)
                     currentSong.pointsInSong[potentialBeats[i].index].isBeat = true;
@@ -166,17 +151,18 @@ public class AdvancedSpawner : MonoBehaviour
         TextAsset textAsset = Resources.Load("Labels 1") as TextAsset;
 
         string[] textInfo = textAsset.text.Split('\n');
-        timing = new float[textInfo.Length];
+        //timing = new float[textInfo.Length];
 
-        for (int i = 0; i < textInfo.Length; i++)
-            timing[i] = float.Parse(textInfo[i]);
+        //for (int i = 0; i < textInfo.Length; i++)
+            //timing[i] = float.Parse(textInfo[i]);
     }
-
+   
     private void spawn() {
-        if (counter < timing.Length && timer > timing[counter])
-        {
-            counter++;
+        if (counter < beats.Length && timer > beats[counter].timing)
+        {   
             GameObject newEnemy = Instantiate(Enemy, SpawnPoints[Random.Range(0, 4)]);
+            newEnemy.SendMessage("setBehaviour", beats[counter].behaviour);
+            counter++;
         }
     }
 
@@ -196,29 +182,77 @@ public class AdvancedSpawner : MonoBehaviour
             /(currentAudio.clip.length / 60f)));
 
         sw.WriteLine("\nUpBeats:({0})", currentSong.pointsInSong.Where(x => x.isBeat == true).ToList().Count);
-        sw.WriteLine(currentSong.pointsInSong[0].ToPoint(true));
+        sw.WriteLine(currentSong.pointsInSong[0].printPoint(true));
         foreach (Point p in currentSong.pointsInSong.Where(x => x.isBeat == true).ToList())
         {
-            sw.WriteLine("\t" + p.ToPoint(false));
+            sw.WriteLine("\t" + p.printPoint(false));
         }
 
         sw.WriteLine("\nBeats:({0})", currentSong.pointsInSong.Where(x => x.isSimplified == true).ToList().Count);
-        sw.WriteLine(currentSong.pointsInSong[0].ToPoint(true));
+        sw.WriteLine(currentSong.pointsInSong[0].printPoint(true));
         foreach (Point p in currentSong.pointsInSong.Where(x => x.isSimplified == true).ToList())
         {
-            sw.WriteLine("\t" + p.ToPoint(false));
+            sw.WriteLine("\t" + p.printPoint(false));
         }
 
 
 
         sw.WriteLine(string.Format("\nPoints:{0}", currentSong.pointsInSong.Count));
-        sw.WriteLine(currentSong.pointsInSong[0].ToPoint(true));
+        sw.WriteLine(currentSong.pointsInSong[0].printPoint(true));
         foreach (Point p in currentSong.pointsInSong)
         {
-            sw.WriteLine(p.ToPoint(false));
+            sw.WriteLine(p.printPoint(false));
         }
 
         sw.Close();
+        #if UNITY_EDITOR
         UnityEditor.AssetDatabase.ImportAsset(path);
+        #endif
+    }
+
+    private void initializeSong() {
+        //-------------------------manually pop beat information
+        //setupManually();
+        //------------------------------------------------------
+        //automatically beat detection
+        float[] samples = new float[currentAudio.clip.samples * currentAudio.clip.channels];
+        //get the data into the samples array from start point 0
+        currentAudio.clip.GetData(samples, 0);
+        currentSong.pointsInSong = new List<Point>();
+        //make sure pre set the capacity of the array so that system dont need to allocate 
+        //memory dynamically which could cause the speed goes down
+        currentSong.pointsInSong.Capacity = (int)(samples.Length / (float)SAMPLES_PER_POINT + 1);
+        int indexCounter = 0;
+        for (int i = 0; i < samples.Length; i += SAMPLES_PER_POINT)
+        {
+            Point point = new Point();
+            point.index = indexCounter++;
+            point.startFromSample = i;
+            //if i + 1023 <= samples.length - 1, means it would get out of the bound
+            if (i + SAMPLES_PER_POINT <= samples.Length)
+                point.finishAtSample = i + SAMPLES_PER_POINT - 1;
+            else
+                point.finishAtSample = samples.Length - 1;
+            //frequency indicates how many samples per second actually in the song,
+            //the equation in the bracket cauculates 
+            point.timeInSong = (point.startFromSample /
+                (float)currentAudio.clip.channels) / (float)currentAudio.clip.frequency;
+            float energySum = 0;
+            for (int j = point.startFromSample; j <= point.finishAtSample; j += currentAudio.clip.channels)
+            {
+                int temp = currentAudio.clip.channels - 1;
+                float sum = 0;
+                while (temp >= 0)
+                {
+                    //if we got two channels then plus them 
+                    sum += samples[j + temp];
+                    temp--;
+                }
+                energySum += sum / (float)currentAudio.clip.channels;
+            }
+            point.energy = Mathf.Abs((energySum / SAMPLES_PER_POINT) * SCALE);
+            point.position = new Vector2(point.timeInSong, point.energy);
+            currentSong.pointsInSong.Add(point);
+        }
     }
 }

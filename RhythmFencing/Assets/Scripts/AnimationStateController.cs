@@ -6,6 +6,7 @@ public class AnimationStateController : MonoBehaviour
 {
     private Animator animator;
     private Vector3 stationaryPoint;
+    private int behaviour;
     // Start is called before the first frame update
     private long startTime;
     void Start()
@@ -25,7 +26,7 @@ public class AnimationStateController : MonoBehaviour
             if (Vector3.Distance(transform.position, Vector3.zero) < 3)
             {
                 stationaryPoint = transform.position;
-                switch (Random.Range(0, 3))
+                switch (behaviour)
                 {
                     case 0:
                         animator.SetBool("StartAttack", true);
@@ -45,11 +46,20 @@ public class AnimationStateController : MonoBehaviour
             Vector3 pos = new Vector3(stationaryPoint.x, animator.rootPosition.y, stationaryPoint.z);
             transform.position = pos;
             if (animationInfo.normalizedTime > 1.0f) {
-                long result = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond - startTime;
-                Debug.Log("" + result);
+                //long result = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond - startTime;
+                //Debug.Log("" + result);
                 Destroy(this.gameObject);
             }
         }
         
+    }
+
+    public void actionPerformed(int animationType) {
+        long result = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond - startTime;
+        Debug.Log("" + result + ", type : " + animationType);
+    }
+
+    public void setBehaviour(int behaviour) {
+        this.behaviour = behaviour;
     }
 }
