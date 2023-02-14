@@ -12,13 +12,13 @@ public class SongFilePathManager : MonoBehaviour
     // Start is called before the first frame update
     void Start(){
         songFileNameDropDown = GetComponent<Dropdown>();
-        addOptions();
+        addOptions(songFileNameDropDown);
         songFileNameDropDown.onValueChanged.AddListener(delegate {
                 onValueChanged(songFileNameDropDown);
             });
     }
 
-    private void addOptions() {
+    private void addOptions(Dropdown dropdown) {
         string audioPath = System.Environment.GetFolderPath(
         System.Environment.SpecialFolder.MyMusic);
 
@@ -39,6 +39,7 @@ public class SongFilePathManager : MonoBehaviour
         {
             Debug.Log(s);
         }
+        UserPref.SONG_FILEPATH = filteredAudioFilePaths[dropdown.value];
     }
 
     private void onValueChanged(Dropdown dropdown){

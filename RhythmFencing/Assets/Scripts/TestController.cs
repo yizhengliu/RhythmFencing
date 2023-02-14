@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using System.IO;
 public class TestController : MonoBehaviour
 {
+    public Text helper;
     public Canvas loadingCanvas;
     public Text loadingProgress;
     private Point[] beats;
@@ -40,7 +41,7 @@ public class TestController : MonoBehaviour
     private Text delay;
     public Button beatDetectionButton;
     public Button userDetectionButton;
-    private float lastBeatTime;
+    private float lastBeatTime = -1;
     private Image beatDetectionImage;
     private Image playerImage;
     private List<float> record = new List<float>();
@@ -210,13 +211,15 @@ public class TestController : MonoBehaviour
     }
 
     public void onClickButton() {
+        if (helper.enabled)
+            helper.enabled = false;
         if (counter == beats.Length)
         {
             SceneManager.LoadScene("StartMenu");
             saveUserBeats();
         }
         //beatDetectionButton.text;
-        if (currentAudio.isPlaying) {
+        if (lastBeatTime != -1 && currentAudio.isPlaying) {
             delay.text = "Delay: " + (currentAudio.time - lastBeatTime) + "s";
             Debug.Log(currentAudio.time);
             record.Add(currentAudio.time);

@@ -97,7 +97,8 @@ public class NormalEnemysController : MonoBehaviour
         }
         if (importer.isDone && !loaded)
         {
-            Destroy(loadingCanvas);
+            loadingCanvas.enabled = false;
+            //Destroy(loadingCanvas);
             initializeSong();
             toSimpleLine();
             findUpBeat();
