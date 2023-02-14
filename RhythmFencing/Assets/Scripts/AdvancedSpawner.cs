@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-#if UNITY_EDITOR
 using UnityEngine;
-#endif
 
 public class AdvancedSpawner : MonoBehaviour
 {
+    public AudioImporter importer;
     private AudioSource currentAudio;
     public GameObject Enemy;
     public Transform[] SpawnPoints;
@@ -17,6 +16,7 @@ public class AdvancedSpawner : MonoBehaviour
     public float SCALE;
     //how simple will the line after analysis
     public float TOLERANCE;
+    public Transform destination;
     private class Point {
         public int index = -1;
         public float timeInSong = -1;
@@ -67,30 +67,38 @@ public class AdvancedSpawner : MonoBehaviour
     private int counter = 0;
     private Song currentSong;
     private float timer = 0;
+    private bool loaded = false;
 
-    // Start is called before the first frame update
-    void Start()
-    {
+    private void Awake(){
         currentAudio = GetComponent<AudioSource>();
-        initializeSong();
-        toSimpleLine();
-        findUpBeat();
-        writeResult();
-        addToBeats();
-        //currentAudio.Play();
+        importer.Loaded += OnLoaded;
+        importer.Import(UserPref.SONG_FILEPATH);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
     {
-        
-        timer += Time.deltaTime;
-        if (!currentAudio.isPlaying)
+        if (importer.isDone && !loaded)
         {
-            if (timer > 5.987f)
-                currentAudio.Play();
+            initializeSong();
+            toSimpleLine();
+            findUpBeat();
+            writeResult();
+            addToBeats();
+            loaded = true;
         }
-        spawn();
+        if (loaded)
+        {
+            timer += Time.deltaTime;
+            if (!currentAudio.isPlaying)
+            {
+                if (timer > 5.987f)
+                    currentAudio.Play();
+            }
+            spawn();
+        }
+    }
+    private void OnLoaded(AudioClip clip) {
+        currentAudio.clip = clip;
     }
 
     private void addToBeats() {
@@ -101,6 +109,7 @@ public class AdvancedSpawner : MonoBehaviour
         //type 2: 5220
         for (int i = 0; i < beats.Length; i++){
             beats[i].behaviour = Random.Range(0, 3);
+            //beats[i].behaviour = 0;
             switch (beats[i].behaviour) {
                 case 0:
                     beats[i].timing = upBeats[i].timeInSong + 0.217f;
@@ -159,9 +168,12 @@ public class AdvancedSpawner : MonoBehaviour
    
     private void spawn() {
         if (counter < beats.Length && timer > beats[counter].timing)
-        {   
-            GameObject newEnemy = Instantiate(Enemy, SpawnPoints[Random.Range(0, 4)]);
+        {
+            int ran = Random.Range(0, 4);
+            GameObject newEnemy = Instantiate(Enemy, SpawnPoints[ran]);
             newEnemy.SendMessage("setBehaviour", beats[counter].behaviour);
+            newEnemy.SendMessage("setDestination", destination);
+            newEnemy.SendMessage("setSpawner", ran);
             counter++;
         }
     }
@@ -205,9 +217,7 @@ public class AdvancedSpawner : MonoBehaviour
         }
 
         sw.Close();
-        #if UNITY_EDITOR
         UnityEditor.AssetDatabase.ImportAsset(path);
-        #endif
     }
 
     private void initializeSong() {
