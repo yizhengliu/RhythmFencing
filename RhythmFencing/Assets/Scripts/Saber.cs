@@ -49,7 +49,7 @@ public class Saber : MonoBehaviour
         if (collision.gameObject.layer == LayerMask.NameToLayer("Sword"))
         {
             float saberAngle = Vector3.Angle(transform.forward, collision.gameObject.transform.forward);
-            if (saberAngle >= 85 && saberAngle <= 115)
+            if (saberAngle >= 85 && saberAngle <= 110)
                 performance = 3;
             else if (saberAngle >= 80 && saberAngle <= 130)
                 performance = 2;
