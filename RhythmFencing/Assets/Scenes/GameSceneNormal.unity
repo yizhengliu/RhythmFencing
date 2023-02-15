@@ -264,7 +264,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!1 &81580929 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 113768, guid: 126d619cf4daa52469682f85c1378b4a, type: 3}
@@ -400,7 +400,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 123403537}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 948f4100a11a5c24981795d21301da5c, type: 3}
   m_Name: 
@@ -460,7 +460,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 123403537}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8b9a305e18de0c04dbd257a21cd47087, type: 3}
   m_Name: 
@@ -531,7 +531,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1051571768989249988, guid: 7db726f211674a44a89c478f721aadc2, type: 3}
       propertyPath: m_Layer
-      value: 10
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 7db726f211674a44a89c478f721aadc2, type: 3}
       propertyPath: m_Controller
@@ -790,7 +790,7 @@ GameObject:
   m_Component:
   - component: {fileID: 383941494}
   - component: {fileID: 383941495}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Sword
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -909,6 +909,7 @@ GameObject:
   - component: {fileID: 937089131}
   - component: {fileID: 937089130}
   - component: {fileID: 937089129}
+  - component: {fileID: 937089133}
   m_Layer: 0
   m_Name: RightHand Saber
   m_TagString: Untagged
@@ -1016,6 +1017,22 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 937089127}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!54 &937089133
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 937089127}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 1
 --- !u!1 &999864162
 GameObject:
   m_ObjectHideFlags: 0
@@ -1026,7 +1043,7 @@ GameObject:
   m_Component:
   - component: {fileID: 999864163}
   - component: {fileID: 999864164}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Sword
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1122,7 +1139,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1051571768989249988, guid: 7db726f211674a44a89c478f721aadc2, type: 3}
       propertyPath: m_Layer
-      value: 10
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 7db726f211674a44a89c478f721aadc2, type: 3}
       propertyPath: m_Controller
@@ -1220,7 +1237,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1051571768989249988, guid: 7db726f211674a44a89c478f721aadc2, type: 3}
       propertyPath: m_Layer
-      value: 10
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 7db726f211674a44a89c478f721aadc2, type: 3}
       propertyPath: m_Controller
@@ -1294,7 +1311,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1571822890}
   - component: {fileID: 1571822891}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Sword
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1342,15 +1359,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 52a52192bf37ef543bb0dcfc6578c80b, type: 3}
       propertyPath: m_LocalScale.x
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 52a52192bf37ef543bb0dcfc6578c80b, type: 3}
       propertyPath: m_LocalScale.y
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 52a52192bf37ef543bb0dcfc6578c80b, type: 3}
       propertyPath: m_LocalScale.z
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 52a52192bf37ef543bb0dcfc6578c80b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1358,11 +1375,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 52a52192bf37ef543bb0dcfc6578c80b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -8.82
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 52a52192bf37ef543bb0dcfc6578c80b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -2.62
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 52a52192bf37ef543bb0dcfc6578c80b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1467,7 +1484,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1051571768989249988, guid: 7db726f211674a44a89c478f721aadc2, type: 3}
       propertyPath: m_Layer
-      value: 10
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 7db726f211674a44a89c478f721aadc2, type: 3}
       propertyPath: m_Controller
@@ -1513,7 +1530,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1757412717}
   - component: {fileID: 1757412718}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Sword
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1652,7 +1669,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1871966449}
   - component: {fileID: 1871966450}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Sword
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1753,7 +1770,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1051571768989249988, guid: 7db726f211674a44a89c478f721aadc2, type: 3}
       propertyPath: m_Layer
-      value: 10
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 7db726f211674a44a89c478f721aadc2, type: 3}
       propertyPath: m_Controller
@@ -1978,6 +1995,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6559815955818311857, guid: 27a716933321c0f409f0952420ec325c, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 139.89685
+      objectReference: {fileID: 0}
     - target: {fileID: 6559815956689282052, guid: 27a716933321c0f409f0952420ec325c, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -2065,6 +2086,22 @@ PrefabInstance:
     - target: {fileID: 6559815956689282058, guid: 27a716933321c0f409f0952420ec325c, type: 3}
       propertyPath: m_Name
       value: CameraUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 6559815956689282059, guid: 27a716933321c0f409f0952420ec325c, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 92416368}
+    - target: {fileID: 6559815956689282059, guid: 27a716933321c0f409f0952420ec325c, type: 3}
+      propertyPath: m_RenderMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6559815956689282059, guid: 27a716933321c0f409f0952420ec325c, type: 3}
+      propertyPath: m_PixelPerfect
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6559815956689282059, guid: 27a716933321c0f409f0952420ec325c, type: 3}
+      propertyPath: m_PlaneDistance
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 27a716933321c0f409f0952420ec325c, type: 3}

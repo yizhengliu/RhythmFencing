@@ -97,8 +97,7 @@ public class NormalEnemysController : MonoBehaviour
         }
         if (importer.isDone && !loaded)
         {
-            loadingCanvas.enabled = false;
-            //Destroy(loadingCanvas);
+            Destroy(loadingCanvas);
             initializeSong();
             toSimpleLine();
             findUpBeat();
@@ -370,7 +369,7 @@ public class NormalEnemysController : MonoBehaviour
         
         int performance = info[0];
         int index = info[1];
-        if (index == beats.Length)
+        if (index == beats.Length || UserPref.HP == 0)
         {
             SceneManager.LoadScene("GameOver");
             saveUserPerformance();
@@ -383,7 +382,7 @@ public class NormalEnemysController : MonoBehaviour
                 UserPref.SCORE -= 100;
             else
                 UserPref.SCORE = 0;
-            UserPref.HP -= 10;
+            //UserPref.HP -= 10;
         }
         else
         {

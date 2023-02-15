@@ -88,6 +88,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
         counter = count;
     }
     public void Hit(int performance) {
+        print("im hitted");
         animator.SetBool("AnotherSlash", false);
         animator.SetBool("NormalSlash", false);
         transform.position = stationaryPoint;
