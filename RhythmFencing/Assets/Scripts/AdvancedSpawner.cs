@@ -19,7 +19,7 @@ public class AdvancedSpawner : MonoBehaviour
     public GameObject Enemy;
     public Transform[] SpawnPoints;
     public Transform destination;
-   
+    
     private struct Beat {
         public float timing;
         public int behaviour;
@@ -38,6 +38,7 @@ public class AdvancedSpawner : MonoBehaviour
     }
     private List<Performance> userPerformances = new List<Performance>();
     private void Awake(){
+        difficultySetting();
         currentAudio = GetComponent<AudioSource>();
         importer.Loaded += OnLoaded;
         importer.Import(UserPref.SONG_FILEPATH);
@@ -45,6 +46,9 @@ public class AdvancedSpawner : MonoBehaviour
 
     private void FixedUpdate()
     {
+        HPBar.fillAmount = UserPref.HP / 100f;
+        if (!importer.isDone)
+            loadingProgress.text = "Loading..." + (Mathf.Round(importer.progress * 1000) / 10) + "%";
         if (importer.isDone && !loaded)
         {
             Destroy(loadingCanvas);
@@ -62,7 +66,7 @@ public class AdvancedSpawner : MonoBehaviour
             timer += Time.deltaTime;
             if (!currentAudio.isPlaying)
             {
-                if (timer >0.809f)
+                if (timer >4.535f)
                     currentAudio.Play();
             }
             spawn();
@@ -80,8 +84,8 @@ public class AdvancedSpawner : MonoBehaviour
     private void addToBeats() {
         BeatDetectionModel.Point[] upBeats = currentSong.Where(x => x.isBeat == true).ToArray();
         beats = new Beat[upBeats.Length];
-        //type 0 another slash: 1135 809
-        //type 1 normal slash: 584 585
+        //type 0 another slash: 809 4535
+        //type 1 normal slash: 585 4320
         for (int i = 0; i < beats.Length; i++)
         {
             beats[i].behaviour = Random.Range(0, 2);
@@ -92,33 +96,11 @@ public class AdvancedSpawner : MonoBehaviour
                     beats[i].timing = upBeats[i].timeInSong;
                     break;
                 case 1:
-                    beats[i].timing = upBeats[i].timeInSong + 0.224f;
+                    beats[i].timing = upBeats[i].timeInSong + 0.215f;
                     break;
             }
 
         }
-        /*
-        Point[] upBeats = currentSong.pointsInSong.Where(x => x.isBeat == true).ToArray();
-        beats = new Beat[upBeats.Length];
-        //type 0: 5770
-        //type 1: 5987
-        //type 2: 5220
-        for (int i = 0; i < beats.Length; i++){
-            beats[i].behaviour = Random.Range(0, 3);
-            //beats[i].behaviour = 0;
-            switch (beats[i].behaviour) {
-                case 0:
-                    beats[i].timing = upBeats[i].timeInSong + 0.217f;
-                    break;
-                case 1:
-                    beats[i].timing = upBeats[i].timeInSong;
-                    break;
-                case 2:
-                    beats[i].timing = upBeats[i].timeInSong + 0.767f;
-                    break;
-            }
-            
-        }*/
     }
 
 
@@ -155,6 +137,8 @@ public class AdvancedSpawner : MonoBehaviour
             newEnemy.SendMessage("setBehaviour", beats[counter].behaviour);
             newEnemy.SendMessage("setDestination", destination);
             newEnemy.SendMessage("setSpawner", ran);
+            newEnemy.SendMessage("setCounter", counter);
+            newEnemy.SendMessage("setController", this.gameObject);
             counter++;
         }
     }
