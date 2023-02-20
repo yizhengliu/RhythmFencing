@@ -8,25 +8,22 @@ public class Saber : MonoBehaviour
     public bool isLeft;
     public Light wrongHitIndicator;
     public LayerMask layer;
-    private Vector3 previousPos;
     public AudioClip hitAudio;
     private AudioSource source;
+    public int frame = 0;
     private void Awake()
     {
         source = GetComponent<AudioSource>();
     }
-    // Update is called once per frame
-    void Update()
-    {
-        //Debug.DrawRay(transform.position, transform.forward, Color.blue, 5f);
-        //Debug.DrawRay(transform.position, transform.up, Color.green, 5f);
-        //Debug.DrawRay(transform.position, transform.right, Color.red, 5f);
-        previousPos = transform.position;
-    }
     private void FixedUpdate()
     {
-        if (wrongHitIndicator.enabled)
-            wrongHitIndicator.enabled = false;
+        if (wrongHitIndicator.color == Color.red) { 
+            frame++;
+            if (frame > 1) {
+                frame = 0;
+                wrongHitIndicator.color = Color.white;
+            }
+        }
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -51,11 +48,10 @@ public class Saber : MonoBehaviour
             vibration();
         }
 
-        //if (other.gameObject.layer == LayerMask.NameToLayer("Body"))
-        //{
-           // other.gameObject.SendMessage("Hit", new double[] { performance});
-            //wrongHitIndicator.enabled = true;
-        //}
+        if (other.gameObject.layer == LayerMask.NameToLayer("Body")) {
+            other.gameObject.SendMessage("Hit", new double[] { performance});
+            wrongHitIndicator.color = Color.red;
+        }
         //SendMessage
 
         //other.gameObject.BroadcastMessage("Hit", performance);

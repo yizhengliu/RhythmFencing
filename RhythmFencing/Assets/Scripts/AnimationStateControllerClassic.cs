@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class AnimationStateControllerClassic : MonoBehaviour
 {
+    public Light lightIndicator;
+    public GameObject controller;
     private Animator animator;
     private Vector3 stationaryPoint;
     private int behaviour;
@@ -11,6 +13,9 @@ public class AnimationStateControllerClassic : MonoBehaviour
     private long startTime;
     private Transform destination;
     private int spawner;
+
+    private int indicatorCount = 0;
+    private int counter;
     void Start()
     {
         animator = GetComponent<Animator>(); 
@@ -18,6 +23,15 @@ public class AnimationStateControllerClassic : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        if (lightIndicator.enabled)
+        {
+            indicatorCount++;
+            if (indicatorCount > 1)
+            {
+                indicatorCount = 0;
+                lightIndicator.enabled = false;
+            }
+        }
         AnimatorStateInfo animationInfo = animator.GetCurrentAnimatorStateInfo(0);
         //if the z coordi is reached
         if (animationInfo.IsName("Sword And Shield Run"))
@@ -31,17 +45,13 @@ public class AnimationStateControllerClassic : MonoBehaviour
                 switch (behaviour)
                 {
                     case 0:
-                        animator.SetBool("StartAttack", true);
-                        //transform.rotation = rot;
+                        animator.SetBool("AnotherSlash", true);
                         break;
                     case 1:
-                        animator.SetBool("RotateSlash", true);
-                        //transform.rotation = rot;
-                        break;
-                    case 2:
                         animator.SetBool("NormalSlash", true);
                         break;
                 }
+                started = true;
 
             }
         }

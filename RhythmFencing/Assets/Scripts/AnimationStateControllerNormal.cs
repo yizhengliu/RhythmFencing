@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class AnimationStateControllerNormal : MonoBehaviour
 {
@@ -8,7 +9,6 @@ public class AnimationStateControllerNormal : MonoBehaviour
     public GameObject controller;
     private Animator animator;
     private Vector3 stationaryPoint;
-    // Start is called before the first frame update
     private long startTime;
     private int index = -1;
     private bool performed = false;
@@ -19,6 +19,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
     private int hitted = 0;
 
     private float indicatorTimer = 0;
+    private int indicatorCount = 0;
     //fix rotation problem, and transformation
 
     private void Awake()
@@ -29,8 +30,14 @@ public class AnimationStateControllerNormal : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        if (lightIndicator.enabled)
-            lightIndicator.enabled = false;
+        if (lightIndicator.enabled) {
+            indicatorCount++;
+            if (indicatorCount > 1)
+            {
+                indicatorCount = 0;
+                lightIndicator.enabled = false;
+            }
+        }
         if (started) {
             indicatorTimer += Time.deltaTime;
             //type 0 another slash: 1135 809
@@ -57,7 +64,8 @@ public class AnimationStateControllerNormal : MonoBehaviour
         if (performed && index != -1 && animationInfo.IsName("Sword And Shield Idle")) {
             UserPref.ENEMIES[index].isActive = false;
             performed = false;
-
+            transform.position = stationaryPoint;
+            transform.rotation = stationaryRotation;
             animator.SetBool("Back", false);
         }
         //set the 2d position to be unchanged
@@ -71,11 +79,12 @@ public class AnimationStateControllerNormal : MonoBehaviour
     }
 
     public void actionPerformed(int animationType)
-    {
+    {/*
         //print the time the action performed
         long result = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond - startTime;
         Debug.Log("action performed: " + result + ", type : " + animationType);
         lightIndicator.enabled = true;
+        */
     }
     
     //
@@ -110,7 +119,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
         transform.rotation = stationaryRotation;
         animator.SetBool("Back", true);
         //missed
-        //Hit(new double[] {0});
+        Hit(new double[] {0});
     }
 
     public void setBehaviour(int behaviour)
@@ -125,21 +134,19 @@ public class AnimationStateControllerNormal : MonoBehaviour
         if (animationInfo.IsName("Another Sword And Shield Slash")
           || animationInfo.IsName("Sword And Shield Normal Slash")) {
             if (performance[0] != 0)
+            {
                 print("im hitted");
+                hitted++;
+            }
             else
                 print("missed");
             animator.SetBool("AnotherSlash", false);
             animator.SetBool("NormalSlash", false);
-            transform.position = stationaryPoint;
-            transform.rotation = stationaryRotation;
             animator.SetBool("Back", true);
             if(performance.Length == 1)
                 controller.SendMessage("Hit", new double[] { performance[0], counter });
             else
                 controller.SendMessage("Hit", new double[] { performance[0], counter, performance[1] });
-
-            transform.position = stationaryPoint;
-            transform.rotation = stationaryRotation;
         }
     }
 

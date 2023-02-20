@@ -57,10 +57,6 @@ public class NormalEnemysController : MonoBehaviour
         }
         UserPref.ENEMIES = es;
     }
-    private void Start()
-    {
-
-    }
     private void FixedUpdate() {
         HPBar.fillAmount = UserPref.HP / 100f;
 
@@ -74,7 +70,6 @@ public class NormalEnemysController : MonoBehaviour
             BeatDetectionModel.writeResult(currentAudio, currentSong);
             addToBeats();
             loaded = true;
-            score.enabled = true;
             //or using mannually set up 
             //setupManually();
         }
@@ -185,7 +180,7 @@ public class NormalEnemysController : MonoBehaviour
         }
         //missed
         if (performance == 0) {
-            UserPref.MAX_COMBO = 0;
+            UserPref.COMBO = 0;
             if (UserPref.SCORE >= 100)
 
                 UserPref.SCORE -= 100;
@@ -199,8 +194,14 @@ public class NormalEnemysController : MonoBehaviour
             np.category = -1;
             userPerformances.Add(np);
         }  else {
-            UserPref.MAX_COMBO++;
-            UserPref.SCORE += (int)MathF.Round(performance * (1 + (UserPref.MAX_COMBO * (UserPref.DIFFICULTY_LEVEL + 1)) * 0.3f / MathF.Abs(currentAudio.time - beats[index].timing)) / 4f);
+
+            UserPref.COMBO++;
+            if(UserPref.COMBO > UserPref.MAX_COMBO)
+                UserPref.MAX_COMBO = UserPref.COMBO;
+            if(currentAudio.time - beats[index].timing < 0.0001)
+                UserPref.SCORE += (int)MathF.Round(performance * (1 + (UserPref.COMBO * (UserPref.DIFFICULTY_LEVEL + 1)) * 0.3f / 0.0001f) / 4f);
+            else
+                UserPref.SCORE += (int)MathF.Round(performance * (1 + (UserPref.COMBO * (UserPref.DIFFICULTY_LEVEL + 1)) * 0.3f / MathF.Abs(currentAudio.time - beats[index].timing)) / 4f);
             Performance np = new Performance();
             np.index = index;
             np.delay = currentAudio.time - beats[index].timing;
@@ -211,7 +212,7 @@ public class NormalEnemysController : MonoBehaviour
 
         Debug.Log("score: " + UserPref.SCORE);
         score.text = "Score: " + UserPref.SCORE;
-        combo.text = UserPref.MAX_COMBO + "\nCOMBO";
+        combo.text = UserPref.COMBO + "\nCOMBO";
     }
 
     public void saveUserPerformance() {

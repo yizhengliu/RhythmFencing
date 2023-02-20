@@ -26,7 +26,7 @@ public class ResultController : MonoBehaviour
         UserPref.DIFFICULTY_LEVEL = -1;
         UserPref.SONG_FILEPATH = null;
         UserPref.SCORE = 0;
-        UserPref.MAX_COMBO = 0;
+        UserPref.COMBO = 0;
         SceneManager.LoadScene("StartMenu");
     }
 }
