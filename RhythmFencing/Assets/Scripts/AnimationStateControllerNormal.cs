@@ -15,6 +15,10 @@ public class AnimationStateControllerNormal : MonoBehaviour
     private Quaternion stationaryRotation;
     private int behaviour;
     private int counter;
+    private bool started = false;
+    private int hitted = 0;
+
+    private float indicatorTimer = 0;
     //fix rotation problem, and transformation
 
     private void Awake()
@@ -24,10 +28,30 @@ public class AnimationStateControllerNormal : MonoBehaviour
         stationaryPoint = transform.position;
     }
     private void FixedUpdate()
-    { 
-        
+    {
         if (lightIndicator.enabled)
             lightIndicator.enabled = false;
+        if (started) {
+            indicatorTimer += Time.deltaTime;
+            //type 0 another slash: 1135 809
+            //type 1 normal slash: 584 585
+            if (behaviour == 0) {
+                //another slash
+                if (indicatorTimer > 0.809) { 
+                    indicatorTimer = 0;
+                    started = false;
+                    lightIndicator.enabled = true;
+                }
+            } else {
+                //normal slash
+                if (indicatorTimer > 0.585)
+                {
+                    indicatorTimer = 0;
+                    started = false;
+                    lightIndicator.enabled = true;
+                }
+            }
+        }
         AnimatorStateInfo animationInfo = animator.GetCurrentAnimatorStateInfo(0);
         //set the action back to idle
         if (performed && index != -1 && animationInfo.IsName("Sword And Shield Idle")) {
@@ -50,7 +74,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
     {
         //print the time the action performed
         long result = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond - startTime;
-        Debug.Log("" + result + ", type : " + animationType);
+        Debug.Log("action performed: " + result + ", type : " + animationType);
         lightIndicator.enabled = true;
     }
     
@@ -65,23 +89,28 @@ public class AnimationStateControllerNormal : MonoBehaviour
         {
             switch (behaviour){
                 case 0:
-                    animator.SetBool("NormalSlash", true);
-                    break;
-                case 1:
                     animator.SetBool("AnotherSlash", true);
                     break;
+                case 1:
+                    animator.SetBool("NormalSlash", true);
+                    break;
             }
+            started = true;
         }
     }
     public void ActionEnd() {
-        Debug.Log("ending");
+        if (hitted > 0){
+            hitted--;
+            return;
+        }
+        Debug.Log("ending: ");
         animator.SetBool("AnotherSlash", false);
         animator.SetBool("NormalSlash", false);
         transform.position = stationaryPoint;
         transform.rotation = stationaryRotation;
         animator.SetBool("Back", true);
         //missed
-        Hit(0);
+        //Hit(new double[] {0});
     }
 
     public void setBehaviour(int behaviour)
@@ -91,17 +120,26 @@ public class AnimationStateControllerNormal : MonoBehaviour
     public void counterIndex(int count) {
         counter = count;
     }
-    public void Hit(int performance) {
+    public void Hit(double[] performance) {
         AnimatorStateInfo animationInfo = animator.GetCurrentAnimatorStateInfo(0);
         if (animationInfo.IsName("Another Sword And Shield Slash")
           || animationInfo.IsName("Sword And Shield Normal Slash")) {
-            print("im hitted");
+            if (performance[0] != 0)
+                print("im hitted");
+            else
+                print("missed");
             animator.SetBool("AnotherSlash", false);
             animator.SetBool("NormalSlash", false);
             transform.position = stationaryPoint;
             transform.rotation = stationaryRotation;
             animator.SetBool("Back", true);
-            controller.SendMessage("Hit", new int[] { performance, counter });
+            if(performance.Length == 1)
+                controller.SendMessage("Hit", new double[] { performance[0], counter });
+            else
+                controller.SendMessage("Hit", new double[] { performance[0], counter, performance[1] });
+
+            transform.position = stationaryPoint;
+            transform.rotation = stationaryRotation;
         }
     }
 

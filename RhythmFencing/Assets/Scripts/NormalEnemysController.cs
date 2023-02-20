@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
@@ -28,7 +27,13 @@ public class NormalEnemysController : MonoBehaviour
     private List<BeatDetectionModel.Point> currentSong;
     private float timer = 0;
     private bool loaded = false;
-
+    private struct Performance {
+        public int index;
+        public float delay;
+        public float angle;
+        public int category;
+    }
+    private List<Performance> userPerformances = new List<Performance>();
 
     private void Awake() {
         currentAudio = GetComponent<AudioSource>();
@@ -57,8 +62,8 @@ public class NormalEnemysController : MonoBehaviour
 
     }
     private void FixedUpdate() {
+        HPBar.fillAmount = UserPref.HP / 100f;
 
-        HPBar.fillAmount = UserPref.HP / 100;
         if (!importer.isDone)
             loadingProgress.text = "Loading..." + (Mathf.Round(importer.progress * 1000) / 10) + "%";
         if (importer.isDone && !loaded) {
@@ -77,7 +82,7 @@ public class NormalEnemysController : MonoBehaviour
             timer += Time.deltaTime;
             if (!currentAudio.isPlaying)
                 //time
-                if (timer > 1.135f)
+                if (timer > 0.809f)
                     currentAudio.Play();
             SendMessages();
             if (counter == beats.Length && timer > currentAudio.clip.length + 3f) {
@@ -93,8 +98,8 @@ public class NormalEnemysController : MonoBehaviour
     private void addToBeats() {
         BeatDetectionModel.Point[] upBeats = currentSong.Where(x => x.isBeat == true).ToArray();
         beats = new Beat[upBeats.Length];
-        //type 0 another slash: 1135
-        //type 2 normal slash: 584
+        //type 0 another slash: 1135 809
+        //type 1 normal slash: 584 585
         for (int i = 0; i < beats.Length; i++)
         {
             beats[i].behaviour = Random.Range(0, 2);
@@ -105,7 +110,7 @@ public class NormalEnemysController : MonoBehaviour
                     beats[i].timing = upBeats[i].timeInSong;
                     break;
                 case 1:
-                    beats[i].timing = upBeats[i].timeInSong + 0.551f;
+                    beats[i].timing = upBeats[i].timeInSong + 0.224f;
                     break;
             }
 
@@ -166,31 +171,42 @@ public class NormalEnemysController : MonoBehaviour
 
     }
 
-    public void Hit(int[] info)
+    public void Hit(double[] info)
     {
-        HPBar.fillAmount = UserPref.HP / 100;
-        int performance = info[0];
-        int index = info[1];
-        if (index == beats.Length || UserPref.HP == 0)
-        {
+        int performance = (int)info[0];
+        int index = (int)info[1];
+        float hitAngle = -1;
+
+        if (info.Length == 3)
+            hitAngle = (float)info[2];
+        if (UserPref.HP == 0) {
             saveUserPerformance();
             SceneManager.LoadScene("GameOver");
         }
-        if (performance == 0)
-        {
+        //missed
+        if (performance == 0) {
             UserPref.MAX_COMBO = 0;
             if (UserPref.SCORE >= 100)
 
                 UserPref.SCORE -= 100;
             else
                 UserPref.SCORE = 0;
-           // UserPref.HP -= 10;
-        }
-        else
-        {
+            UserPref.HP -= 10;
+            Performance np = new Performance();
+            np.index = index;
+            np.delay = -1;
+            np.angle = -1;
+            np.category = -1;
+            userPerformances.Add(np);
+        }  else {
             UserPref.MAX_COMBO++;
             UserPref.SCORE += (int)MathF.Round(performance * (1 + (UserPref.MAX_COMBO * (UserPref.DIFFICULTY_LEVEL + 1)) * 0.3f / MathF.Abs(currentAudio.time - beats[index].timing)) / 4f);
-
+            Performance np = new Performance();
+            np.index = index;
+            np.delay = currentAudio.time - beats[index].timing;
+            np.angle = hitAngle;
+            np.category = performance;
+            userPerformances.Add(np);
         }
 
         Debug.Log("score: " + UserPref.SCORE);
@@ -198,7 +214,33 @@ public class NormalEnemysController : MonoBehaviour
         combo.text = UserPref.MAX_COMBO + "\nCOMBO";
     }
 
-    public void saveUserPerformance() { 
-    
+    public void saveUserPerformance() {
+        string path = "Assets/Result/UserPerformance.txt";
+        StreamWriter sw = new StreamWriter(path, false);
+        sw.WriteLine(string.Format("\tMaxCombos = {0}", UserPref.MAX_COMBO));
+        sw.WriteLine(string.Format("\tScore = {0}", UserPref.SCORE));
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        sb.Append("\n\t");
+        sb.Append("index".PadRight(10));
+        sb.Append("delay".PadRight(20));
+        sb.Append("angle".PadRight(20));
+        sb.Append("category".PadRight(20));
+
+        sb.Append("\n\t");
+        sb.Append("---------".PadRight(10));
+        sb.Append("-------------------".PadRight(20));
+        sb.Append("-------------------".PadRight(20));
+        sb.Append("-------------------".PadRight(20));
+        foreach (Performance p in userPerformances)
+        {
+            sb = new System.Text.StringBuilder();
+            sb.Append(p.index.ToString().PadRight(10));
+            sb.Append(p.delay.ToString().PadRight(20));
+            sb.Append(p.angle.ToString().PadRight(20));
+            sb.Append(p.category.ToString().PadRight(20));
+            sw.WriteLine("\t" + sb.ToString());
+        }
+        sw.Close();
+        UnityEditor.AssetDatabase.ImportAsset(path);
     }
 }

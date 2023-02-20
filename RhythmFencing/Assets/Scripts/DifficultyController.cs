@@ -12,7 +12,7 @@ public class DifficultyController : MonoBehaviour
         difficultyDropDown.onValueChanged.AddListener(delegate {
             onValueChanged(difficultyDropDown);
         });
-
+        UserPref.DIFFICULTY_LEVEL = 0;
         Debug.Log("You have selected difficulty: " + UserPref.DIFFICULTY_LEVEL);
     }
 
