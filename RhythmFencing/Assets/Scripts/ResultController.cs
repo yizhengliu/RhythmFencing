@@ -23,9 +23,8 @@ public class ResultController : MonoBehaviour
     public void onClickBack() {
         UserPref.HP = 100;
         UserPref.GAME_MODE = false;
-        UserPref.DIFFICULTY_LEVEL = 0;
-        UserPref.SONG_FILEPATH = "C:\\Users\\27571\\Music\\¡¾Music¡¿¥¸¥§¥Ã¥È¥Ú¥ó¥®¥ó£²ºÅ- òXÒô¤Î¤Ê¤¤ÊÀ½ç.mp3";
-        //public static string SONG_FILEPATH = null;
+        UserPref.DIFFICULTY_LEVEL = -1;
+        UserPref.SONG_FILEPATH = null;
         UserPref.SCORE = 0;
         UserPref.MAX_COMBO = 0;
         SceneManager.LoadScene("StartMenu");

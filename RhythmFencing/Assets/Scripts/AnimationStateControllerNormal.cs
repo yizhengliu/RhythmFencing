@@ -29,12 +29,14 @@ public class AnimationStateControllerNormal : MonoBehaviour
         if (lightIndicator.enabled)
             lightIndicator.enabled = false;
         AnimatorStateInfo animationInfo = animator.GetCurrentAnimatorStateInfo(0);
+        //set the action back to idle
         if (performed && index != -1 && animationInfo.IsName("Sword And Shield Idle")) {
             UserPref.ENEMIES[index].isActive = false;
             performed = false;
 
             animator.SetBool("Back", false);
         }
+        //set the 2d position to be unchanged
         if (animationInfo.IsName("Another Sword And Shield Slash")
           || animationInfo.IsName("Sword And Shield Normal Slash"))
         {
@@ -46,11 +48,13 @@ public class AnimationStateControllerNormal : MonoBehaviour
 
     public void actionPerformed(int animationType)
     {
+        //print the time the action performed
         long result = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond - startTime;
         Debug.Log("" + result + ", type : " + animationType);
         lightIndicator.enabled = true;
     }
     
+    //
     public void startAction(int i){
         transform.position = stationaryPoint;
         transform.rotation = stationaryRotation;
@@ -71,13 +75,13 @@ public class AnimationStateControllerNormal : MonoBehaviour
     }
     public void ActionEnd() {
         Debug.Log("ending");
-        //Hit(0);
-
         animator.SetBool("AnotherSlash", false);
         animator.SetBool("NormalSlash", false);
         transform.position = stationaryPoint;
         transform.rotation = stationaryRotation;
         animator.SetBool("Back", true);
+        //missed
+        Hit(0);
     }
 
     public void setBehaviour(int behaviour)
@@ -88,13 +92,17 @@ public class AnimationStateControllerNormal : MonoBehaviour
         counter = count;
     }
     public void Hit(int performance) {
-        print("im hitted");
-        animator.SetBool("AnotherSlash", false);
-        animator.SetBool("NormalSlash", false);
-        transform.position = stationaryPoint;
-        transform.rotation = stationaryRotation;
-        animator.SetBool("Back", true);
-        controller.SendMessage("Hit", new int[] { performance, counter});
+        AnimatorStateInfo animationInfo = animator.GetCurrentAnimatorStateInfo(0);
+        if (animationInfo.IsName("Another Sword And Shield Slash")
+          || animationInfo.IsName("Sword And Shield Normal Slash")) {
+            print("im hitted");
+            animator.SetBool("AnotherSlash", false);
+            animator.SetBool("NormalSlash", false);
+            transform.position = stationaryPoint;
+            transform.rotation = stationaryRotation;
+            animator.SetBool("Back", true);
+            controller.SendMessage("Hit", new int[] { performance, counter });
+        }
     }
 
 

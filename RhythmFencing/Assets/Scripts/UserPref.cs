@@ -1,9 +1,10 @@
 public static class UserPref
 {
-    public static int HP = 100;
+    public static int HP = 80;
+    //false is normal, true is classic
     public static bool GAME_MODE = false;
-    public static int DIFFICULTY_LEVEL = 0;
-    public static string SONG_FILEPATH = "C:\\Users\\edbod\\Music\\suzumiya.mp3";
+    public static int DIFFICULTY_LEVEL = 2;
+    public static string SONG_FILEPATH = "C:\\Users\\27571\\Music\\September - Cry For You (UK Radio Edit).mp3";
     //public static string SONG_FILEPATH = null;
     public static int SCORE = 0;
     public static int MAX_COMBO = 0;
@@ -19,5 +20,5 @@ public static class UserPref
     //make a easy line more accurate
     public static float SCALE = 300;
     //how simple will the line after analysis
-    public static float TOLERANCE = 2f;
+    public static float TOLERANCE = 0.5f;
 }
