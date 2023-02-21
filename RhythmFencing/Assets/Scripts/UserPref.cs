@@ -24,4 +24,5 @@ public static class UserPref
     //how simple will the line after analysis
     public static float TOLERANCE = 0.5f;
     public static int MAX_COMBO = 0;
+    public static bool LOADED = false;
 }

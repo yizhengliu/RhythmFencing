@@ -42,16 +42,18 @@ public class TestController : MonoBehaviour
         if (lastBeatTime == -1 && currentAudio.isPlaying)
         {
             delay.text = "Delay: " + (currentAudio.time - beats[0].timeInSong);
+            record.Add(currentAudio.time);
         }
         if (lastBeatTime != -1 && currentAudio.isPlaying)
         {
             delay.text = "Delay: " + (currentAudio.time - lastBeatTime) + "s";
             Debug.Log(currentAudio.time);
+            record.Add(currentAudio.time);
             playerImage.color = Color.green;
             userTimer = 0;
         }
 
-        record.Add(currentAudio.time);
+        
     }
 
     private void Awake() {
@@ -74,7 +76,7 @@ public class TestController : MonoBehaviour
 
     private void FixedUpdate() {
         if (!importer.isDone)
-            loadingProgress.text = "Loading..." + Mathf.Round(importer.progress * 100) + "%";
+            loadingProgress.text = "Loading..." + (Mathf.Round(importer.progress * 1000) / 10) + "%";
         if (keyPressed) {
             keyPressed = false;
             onClickButton();
@@ -131,7 +133,7 @@ public class TestController : MonoBehaviour
 
     private void saveUserBeats() {
         string path = "Assets/Result/UserBeatDetection.txt";
-        StreamWriter sw = new StreamWriter(path, false);
+        StreamWriter sw = new StreamWriter(path, true);
         foreach (float f in record) {
             sw.WriteLine(f);
         }

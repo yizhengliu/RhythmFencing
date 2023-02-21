@@ -74,13 +74,15 @@ public class NormalEnemysController : MonoBehaviour
             //setupManually();
         }
         if (loaded) {
+            UserPref.LOADED = true;
             timer += Time.deltaTime;
             if (!currentAudio.isPlaying)
                 //time
-                if (timer > 0.809f)
+                if (timer > 0.809f && timer < 30f)
                     currentAudio.Play();
             SendMessages();
             if (counter == beats.Length && timer > currentAudio.clip.length + 3f) {
+                UserPref.LOADED = false;
                 saveUserPerformance();
                 SceneManager.LoadScene("GameOver");
             }
@@ -174,10 +176,6 @@ public class NormalEnemysController : MonoBehaviour
 
         if (info.Length == 3)
             hitAngle = (float)info[2];
-        if (UserPref.HP == 0) {
-            saveUserPerformance();
-            SceneManager.LoadScene("GameOver");
-        }
         //missed
         if (performance == 0) {
             UserPref.COMBO = 0;
@@ -187,6 +185,12 @@ public class NormalEnemysController : MonoBehaviour
             else
                 UserPref.SCORE = 0;
             UserPref.HP -= 10;
+
+            if (UserPref.HP == 0)
+            {
+                saveUserPerformance();
+                SceneManager.LoadScene("GameOver");
+            }
             Performance np = new Performance();
             np.index = index;
             np.delay = -1;
@@ -194,7 +198,7 @@ public class NormalEnemysController : MonoBehaviour
             np.category = -1;
             userPerformances.Add(np);
         }  else {
-
+            //hit
             UserPref.COMBO++;
             if(UserPref.COMBO > UserPref.MAX_COMBO)
                 UserPref.MAX_COMBO = UserPref.COMBO;
@@ -217,7 +221,7 @@ public class NormalEnemysController : MonoBehaviour
 
     public void saveUserPerformance() {
         string path = "Assets/Result/UserPerformance.txt";
-        StreamWriter sw = new StreamWriter(path, false);
+        StreamWriter sw = new StreamWriter(path, true);
         sw.WriteLine(string.Format("\tMaxCombos = {0}", UserPref.MAX_COMBO));
         sw.WriteLine(string.Format("\tScore = {0}", UserPref.SCORE));
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
@@ -232,6 +236,7 @@ public class NormalEnemysController : MonoBehaviour
         sb.Append("-------------------".PadRight(20));
         sb.Append("-------------------".PadRight(20));
         sb.Append("-------------------".PadRight(20));
+        sw.WriteLine(sb.ToString());
         foreach (Performance p in userPerformances)
         {
             sb = new System.Text.StringBuilder();

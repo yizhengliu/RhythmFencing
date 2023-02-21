@@ -211,7 +211,7 @@ public class AdvancedSpawner : MonoBehaviour
     public void saveUserPerformance()
     {
         string path = "Assets/Result/UserPerformance.txt";
-        StreamWriter sw = new StreamWriter(path, false);
+        StreamWriter sw = new StreamWriter(path, true);
         sw.WriteLine(string.Format("\tMaxCombos = {0}", UserPref.MAX_COMBO));
         sw.WriteLine(string.Format("\tScore = {0}", UserPref.SCORE));
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
