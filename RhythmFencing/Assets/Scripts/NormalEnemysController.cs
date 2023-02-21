@@ -142,8 +142,9 @@ public class NormalEnemysController : MonoBehaviour
             //send messages
             //possible indexs
             List<int> possible = UserPref.ENEMIES.Where(e => e.isActive == false).Select(e => e.index).ToList();
-            
+
             //if possible
+            //Debug.Log("Possible enemy: " + possible.Count);
             if (possible.Count > 0) {
                 int ran = Random.Range(0, possible.Count);
                 enemies[possible[ran]].SendMessage("setBehaviour", beats[counter].behaviour);

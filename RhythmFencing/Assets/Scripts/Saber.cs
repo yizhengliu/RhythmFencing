@@ -48,9 +48,9 @@ public class Saber : MonoBehaviour
             // Destroy(other.gameObject);
             print("angle: " + Vector3.Angle(transform.forward, collision.transform.forward));
             print("sword detected");
-            collision.gameObject.SendMessage("Hit", new double[] { performance, saberAngle });
+            collision.gameObject.SendMessage("Hit", new double[] { performance, saberAngle, isLeft ? 0 : 1});
 
-            vibration(40, 1, 255);
+            vibration(100, 1, 255);
         }
 
         if (collision.gameObject.layer == LayerMask.NameToLayer("Body"))
