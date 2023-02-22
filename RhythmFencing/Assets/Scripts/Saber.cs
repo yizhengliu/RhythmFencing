@@ -8,20 +8,10 @@ public class Saber : MonoBehaviour
     public bool isLeft;
     public Light wrongHitIndicator;
     public LayerMask layer;
-    public AudioClip hitAudio;
-    private AudioSource source;
     private int frame = 0;
-    private void Awake()
-    {
-        source = GetComponent<AudioSource>();
-    }
+    private bool entered = false;
     private void FixedUpdate()
     {
-        //Debug.DrawRay(transform.position, transform.forward, Color.blue, 1f);
-        //should use right to detect collision uusing ray cast
-        //Debug.DrawRay(transform.position, transform.right, Color.red, 1f);
-        //should use green to detect angle
-        //Debug.DrawRay(transform.position, transform.up, Color.green, 1f);
         if (wrongHitIndicator.color == Color.red) { 
             frame++;
             if (frame > 1) {
@@ -30,8 +20,36 @@ public class Saber : MonoBehaviour
             }
         }
     }
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider collision)
     {
+        int performance = 0;
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Sword"))
+        {
+            float saberAngle = Vector3.Angle(transform.up, collision.transform.forward);
+            if (saberAngle >= 86 && saberAngle <= 94)
+                performance = 3;
+            else if (saberAngle >= 75 && saberAngle <= 105)
+                performance = 2;
+            else
+                performance = 1;
+            collision.gameObject.SendMessage("Hit", new double[] { performance, saberAngle, isLeft ? 0 : 1 });
+
+        }
+
+        else if (!entered && collision.gameObject.layer == LayerMask.NameToLayer("Body"))
+        {
+            entered = true;
+            collision.gameObject.SendMessage("Hit", new double[] { -1 });
+            wrongHitIndicator.color = Color.red;
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.layer == LayerMask.NameToLayer("Body"))
+            entered = false;
+    }
+    private void OnCollisionEnter(Collision collision)
+    {/*
         Debug.Log("Collision detected");
         int performance = 0;
         if (collision.gameObject.layer == LayerMask.NameToLayer("Sword"))
@@ -58,30 +76,9 @@ public class Saber : MonoBehaviour
             collision.gameObject.SendMessage("Hit", new double[] { performance });
             wrongHitIndicator.color = Color.red;
         }
-        //SendMessage
-
-        //other.gameObject.BroadcastMessage("Hit", performance);
+        */
     }
    
-    private void vibration()
-    {
-        OVRHapticsClip hapticsClip = new OVRHapticsClip(hitAudio);
 
-        if (isLeft)
-            OVRHaptics.LeftChannel.Preempt(hapticsClip);
-        else
-            OVRHaptics.RightChannel.Preempt(hapticsClip);
-
-    }
-
-    private void vibration(int iteration, int frequency, int strength)
-    {
-        OVRHapticsClip hapticsClip = new OVRHapticsClip();
-        for (int i = 0; i < iteration; i++)
-            hapticsClip.WriteSample((byte)strength);
-        if (isLeft)
-            OVRHaptics.LeftChannel.Preempt(hapticsClip);
-        else
-            OVRHaptics.RightChannel.Preempt(hapticsClip);
-    }
+    
 }

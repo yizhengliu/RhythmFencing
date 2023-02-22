@@ -178,7 +178,7 @@ public class NormalEnemysController : MonoBehaviour
         if (info.Length == 3)
             hitAngle = (float)info[2];
         //missed
-        if (performance == 0) {
+        if (performance <= 0) {
             UserPref.COMBO = 0;
             if (UserPref.SCORE >= 100)
 
@@ -187,23 +187,25 @@ public class NormalEnemysController : MonoBehaviour
                 UserPref.SCORE = 0;
             UserPref.HP -= 10;
 
+            Performance np = new Performance();
+            np.index = index;
+            np.delay = -1;
+            np.angle = -1;
+            np.category = performance;
+            userPerformances.Add(np);
+
             if (UserPref.HP == 0)
             {
                 saveUserPerformance();
                 SceneManager.LoadScene("GameOver");
             }
-            Performance np = new Performance();
-            np.index = index;
-            np.delay = -1;
-            np.angle = -1;
-            np.category = -1;
-            userPerformances.Add(np);
-        }  else {
+            
+        } else {
             //hit
             UserPref.COMBO++;
-            if(UserPref.COMBO > UserPref.MAX_COMBO)
+            if (UserPref.COMBO > UserPref.MAX_COMBO)
                 UserPref.MAX_COMBO = UserPref.COMBO;
-            if(currentAudio.time - beats[index].timing < 0.0001)
+            if (currentAudio.time - beats[index].timing < 0.0001)
                 UserPref.SCORE += (int)MathF.Round(performance * (1 + (UserPref.COMBO * (UserPref.DIFFICULTY_LEVEL + 1)) * 0.3f / 0.0001f) / 4f);
             else
                 UserPref.SCORE += (int)MathF.Round(performance * (1 + (UserPref.COMBO * (UserPref.DIFFICULTY_LEVEL + 1)) * 0.3f / MathF.Abs(currentAudio.time - beats[index].timing)) / 4f);
