@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static Unity.VisualScripting.Member;
 
 public class AnimationStateControllerClassic : MonoBehaviour
 {
@@ -16,17 +17,18 @@ public class AnimationStateControllerClassic : MonoBehaviour
     private int counter;
     void Start()
     {
-        animator = GetComponent<Animator>(); 
+        animator = GetComponent<Animator>();
         startTime = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond;
     }
     private void FixedUpdate()
     {
-        AnimatorStateInfo animationInfo = animator.GetCurrentAnimatorStateInfo(0);
         //if the z coordi is reached
-        if (animationInfo.IsName("Sword And Shield Run"))
-        {
 
-            if (Vector3.Distance(transform.position, destination.position) < 2f)
+        if (!(animator.GetBool("NormalSlash") || animator.GetBool("AnotherSlash")))
+        {
+            //if it is running
+            //distance needs to be checked
+            if (Vector3.Distance(transform.position, destination.position) < 3f)
             {
                 //Quaternion rot = transform.rotation;
                 //rot.y = Quaternion.LookRotation(transform.position - destination.position).y;
@@ -43,11 +45,10 @@ public class AnimationStateControllerClassic : MonoBehaviour
 
             }
         }
-        else if (animationInfo.IsName("Another Sword And Shield Slash")
-          || animationInfo.IsName("Sword And Shield Normal Slash"))
+        else
         {
-            Vector3 pos = new Vector3(stationaryPoint.x, animator.rootPosition.y, stationaryPoint.z);
-            transform.position = pos;
+            //Vector3 pos = new Vector3(stationaryPoint.x, animator.rootPosition.y, stationaryPoint.z);
+            //transform.position = pos;
         }
     }
     public void ActionEnd() {
@@ -79,5 +80,37 @@ public class AnimationStateControllerClassic : MonoBehaviour
         counter = count;
     }
 
+    public void Hit(double[] performance)
+    {
+        if (performance[0] == -1)
+        {
+            controller.SendMessage("Hit", new double[] { -1, counter });
+            Destroy(this.gameObject);
+            return;
+        }
+        //AnimatorStateInfo animationInfo = animator.GetCurrentAnimatorStateInfo(0);
+        if (animator.GetBool("NormalSlash") || animator.GetBool("AnotherSlash"))
+        {
+            if (performance[0] != 0)
+            {
+                //source.PlayOneShot(clip[behaviour]);
+                controller.SendMessage("playHitEffect", behaviour);
+                vibration(75, 2, 255, performance[2] == 0 ? true : false);
+                print("from saber");
+                controller.SendMessage("Hit", new double[] { performance[0], counter, performance[1] });
+                Destroy(this.gameObject);
+            }
+        }
+    }
 
+    private void vibration(int iteration, int frequency, int strength, bool isLeft)
+    {
+        OVRHapticsClip hapticsClip = new OVRHapticsClip();
+        for (int i = 0; i < iteration; i++)
+            hapticsClip.WriteSample(i % frequency == 0 ? (byte)strength : (byte)0);
+        if (isLeft)
+            OVRHaptics.LeftChannel.Preempt(hapticsClip);
+        else
+            OVRHaptics.RightChannel.Preempt(hapticsClip);
+    }
 }

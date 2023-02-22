@@ -81,7 +81,7 @@ public class NormalEnemysController : MonoBehaviour
                 if (timer > 0.809f && timer < 30f)
                     currentAudio.Play();
             SendMessages();
-            if (counter == beats.Length && timer > currentAudio.clip.length + 3f) {
+            if (counter == beats.Length && !currentAudio.isPlaying) {
                 UserPref.LOADED = false;
                 saveUserPerformance();
                 SceneManager.LoadScene("GameOver");

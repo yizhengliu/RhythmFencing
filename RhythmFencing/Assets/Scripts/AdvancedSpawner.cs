@@ -9,6 +9,8 @@ using Random = UnityEngine.Random;
 
 public class AdvancedSpawner : MonoBehaviour
 {
+    public GameObject hitEffect;
+    public Light lightIndicator;
     public Image HPBar;
     public Text score;
     public Text combo;
@@ -19,7 +21,8 @@ public class AdvancedSpawner : MonoBehaviour
     public GameObject Enemy;
     public Transform[] SpawnPoints;
     public Transform destination;
-    
+
+    private int indicatorFrameCount = 0;
     private struct Beat {
         public float timing;
         public int behaviour;
@@ -29,6 +32,8 @@ public class AdvancedSpawner : MonoBehaviour
     private List<BeatDetectionModel.Point> currentSong;
     private float timer = 0;
     private bool loaded = false;
+    private float[] flashing;
+    private int lightCounter = 0;
     private struct Performance
     {
         public int index;
@@ -46,6 +51,15 @@ public class AdvancedSpawner : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (lightIndicator.enabled)
+        {
+            indicatorFrameCount++;
+            if (indicatorFrameCount > 1)
+            {
+                indicatorFrameCount = 0;
+                lightIndicator.enabled = false;
+            }
+        }
         HPBar.fillAmount = UserPref.HP / 100f;
         if (!importer.isDone)
             loadingProgress.text = "Loading..." + (Mathf.Round(importer.progress * 1000) / 10) + "%";
@@ -70,7 +84,7 @@ public class AdvancedSpawner : MonoBehaviour
                     currentAudio.Play();
             }
             spawn();
-            if (counter == beats.Length && timer > currentAudio.clip.length + 3f)
+            if (counter == beats.Length && !currentAudio.isPlaying)
             {
                 saveUserPerformance();
                 SceneManager.LoadScene("GameOver");
@@ -84,6 +98,7 @@ public class AdvancedSpawner : MonoBehaviour
     private void addToBeats() {
         BeatDetectionModel.Point[] upBeats = currentSong.Where(x => x.isBeat == true).ToArray();
         beats = new Beat[upBeats.Length];
+        flashing = new float[upBeats.Length];
         //type 0 another slash: 809 4535
         //type 1 normal slash: 585 4320
         for (int i = 0; i < beats.Length; i++)
@@ -94,13 +109,17 @@ public class AdvancedSpawner : MonoBehaviour
             {
                 case 0:
                     beats[i].timing = upBeats[i].timeInSong;
+                    flashing[i] = beats[i].timing + 4.535f;
                     break;
                 case 1:
                     beats[i].timing = upBeats[i].timeInSong + 0.215f;
+                    flashing[i] = beats[i].timing + 4.32f;
                     break;
             }
 
+
         }
+
     }
 
 
@@ -130,9 +149,14 @@ public class AdvancedSpawner : MonoBehaviour
     }
    
     private void spawn() {
+        if (lightCounter < flashing.Length && timer > flashing[lightCounter]) {
+            lightIndicator.enabled = true;
+            lightCounter++;
+        }
         if (counter < beats.Length && timer > beats[counter].timing)
         {
             int ran = Random.Range(0, 4);
+            ran = 0;
             GameObject newEnemy = Instantiate(Enemy, SpawnPoints[ran]);
             newEnemy.SendMessage("setBehaviour", beats[counter].behaviour);
             newEnemy.SendMessage("setDestination", destination);
@@ -164,13 +188,8 @@ public class AdvancedSpawner : MonoBehaviour
 
         if (info.Length == 3)
             hitAngle = (float)info[2];
-        if (UserPref.HP == 0)
-        {
-            saveUserPerformance();
-            SceneManager.LoadScene("GameOver");
-        }
         //missed
-        if (performance == 0)
+        if (performance <= 0)
         {
             UserPref.COMBO = 0;
             if (UserPref.SCORE >= 100)
@@ -179,16 +198,24 @@ public class AdvancedSpawner : MonoBehaviour
             else
                 UserPref.SCORE = 0;
             UserPref.HP -= 10;
+
             Performance np = new Performance();
             np.index = index;
             np.delay = -1;
             np.angle = -1;
-            np.category = -1;
+            np.category = performance;
             userPerformances.Add(np);
+
+            if (UserPref.HP == 0)
+            {
+                saveUserPerformance();
+                SceneManager.LoadScene("GameOver");
+            }
+
         }
         else
         {
-
+            //hit
             UserPref.COMBO++;
             if (UserPref.COMBO > UserPref.MAX_COMBO)
                 UserPref.MAX_COMBO = UserPref.COMBO;
@@ -237,5 +264,9 @@ public class AdvancedSpawner : MonoBehaviour
         }
         sw.Close();
         UnityEditor.AssetDatabase.ImportAsset(path);
+    }
+
+    private void playHitEffect(int behaviour) {
+        hitEffect.SendMessage("playHitEffect", behaviour);
     }
 }

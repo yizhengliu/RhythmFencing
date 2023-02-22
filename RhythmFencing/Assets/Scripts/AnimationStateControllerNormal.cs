@@ -34,8 +34,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
     }
     private void Update()
     {
-        AnimatorStateInfo animationInfo = animator.GetCurrentAnimatorStateInfo(0);
-        //record the initial position and rotation
+         //record the initial position and rotation
         if (firstUpdate) {
             stationaryRotation = transform.rotation;
             stationaryPoint = transform.position;
