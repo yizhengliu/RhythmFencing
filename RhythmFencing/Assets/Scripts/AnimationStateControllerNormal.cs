@@ -4,6 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 public class AnimationStateControllerNormal : MonoBehaviour
 {
+    public GameObject[] actionHelpers;
     public AudioClip[] clip;
     public Light lightIndicator;
     public GameObject controller;
@@ -102,7 +103,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
         
         //print the time the action performed
         long result = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond - startTime;
-        Debug.Log("action performed: " + result + ", type : " + at_);
+        //Debug.Log("action performed: " + result + ", type : " + at_);
         //lightIndicator.enabled = true;
         
     }
@@ -120,9 +121,11 @@ public class AnimationStateControllerNormal : MonoBehaviour
         {
             case 0:
                 animator.SetBool("AnotherSlash", true);
+                actionHelpers[0].SetActive(true);
                 break;
             case 1:
                 animator.SetBool("NormalSlash", true);
+                actionHelpers[1].SetActive(true);
                 break;
         }
         started = true;
@@ -141,35 +144,55 @@ public class AnimationStateControllerNormal : MonoBehaviour
     }
     public void Hit(double[] performance)
     {
-        if (performance[0] == -1) {
-            controller.SendMessage("Hit", new double[] { -1, counter });
-            return;
+        switch (performance[0]) { 
+            case 0:
+                print("From Missed");
+                break;
+            case -1:
+                print("From Body Hit");
+                break;
+            default:
+                print("From Saber");
+                break;
         }
         if (beenHitted)
             return;
-        beenHitted = true;
+        
         //AnimatorStateInfo animationInfo = animator.GetCurrentAnimatorStateInfo(0);
-        if (
-          animator.GetBool("NormalSlash") || animator.GetBool("AnotherSlash"))
+        if (animator.GetBool("NormalSlash") || animator.GetBool("AnotherSlash"))
         {
-            
+
             animator.SetBool("AnotherSlash", false);
             animator.SetBool("NormalSlash", false);
-
-            if (performance[0] != 0)
+            actionHelpers[0].SetActive(false);
+            actionHelpers[1].SetActive(false);
+            if (performance[0] > 0)
             {
+                beenHitted = true;
                 source.PlayOneShot(clip[behaviour]);
                 vibration(75, 2, 255, performance[2] == 0 ? true : false);
-                print("from saber");
+                print("Im hitted");
                 controller.SendMessage("Hit", new double[] { performance[0], counter, performance[1] });
+            }
+            else if (performance[0] == -1)
+            {
+                print("Body hitted");
+                controller.SendMessage("Hit", new double[] { -1, counter });
             }
             else
             {
-                print("from action end");
+                print("Missed");
                 controller.SendMessage("Hit", new double[] { performance[0], counter });
             }
             //reset after action
             resetTransform();
+        }
+        else {
+            if (performance[0] == -1)
+            {
+                print("Body hitted");
+                controller.SendMessage("Hit", new double[] { -1, counter });
+            }
         }
     }
 

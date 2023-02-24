@@ -612,10 +612,30 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -45
       objectReference: {fileID: 0}
+    - target: {fileID: 4315130433599081124, guid: 7e8e2f7fd6f178a429380a72218be379, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8012353166351995741, guid: 7e8e2f7fd6f178a429380a72218be379, type: 3}
       propertyPath: wrongHitIndicator
       value: 
       objectReference: {fileID: 568733191}
+    - target: {fileID: 8012353166351995741, guid: 7e8e2f7fd6f178a429380a72218be379, type: 3}
+      propertyPath: visualHitEffect.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8012353166351995741, guid: 7e8e2f7fd6f178a429380a72218be379, type: 3}
+      propertyPath: visualHitEffect.Array.data[0]
+      value: 
+      objectReference: {fileID: 5024009746357069194, guid: ec3f674830402cc45bce805cf6493db7, type: 3}
+    - target: {fileID: 8012353166351995741, guid: 7e8e2f7fd6f178a429380a72218be379, type: 3}
+      propertyPath: visualHitEffect.Array.data[1]
+      value: 
+      objectReference: {fileID: 2955623459812423943, guid: f5507a8c6a22c404ab324980c4e8a11b, type: 3}
+    - target: {fileID: 8012353166351995741, guid: 7e8e2f7fd6f178a429380a72218be379, type: 3}
+      propertyPath: visualHitEffect.Array.data[2]
+      value: 
+      objectReference: {fileID: 8443315704496310910, guid: 6ef35fa36e3a65043b2d800600204bdd, type: 3}
     m_RemovedComponents:
     - {fileID: 8012353166351995742, guid: 7e8e2f7fd6f178a429380a72218be379, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 7e8e2f7fd6f178a429380a72218be379, type: 3}
@@ -827,7 +847,7 @@ MonoBehaviour:
   - {fileID: 1909229801}
   - {fileID: 1913049837}
   - {fileID: 2019141489}
-  destination: {fileID: 820355765}
+  playerPos: {fileID: 63244840}
 --- !u!82 &680266902
 AudioSource:
   m_ObjectHideFlags: 0
@@ -991,6 +1011,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -45
       objectReference: {fileID: 0}
+    - target: {fileID: 4315130433599081124, guid: 7e8e2f7fd6f178a429380a72218be379, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8012353166351995741, guid: 7e8e2f7fd6f178a429380a72218be379, type: 3}
       propertyPath: isLeft
       value: 0
@@ -999,6 +1023,22 @@ PrefabInstance:
       propertyPath: wrongHitIndicator
       value: 
       objectReference: {fileID: 568733191}
+    - target: {fileID: 8012353166351995741, guid: 7e8e2f7fd6f178a429380a72218be379, type: 3}
+      propertyPath: visualHitEffect.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8012353166351995741, guid: 7e8e2f7fd6f178a429380a72218be379, type: 3}
+      propertyPath: visualHitEffect.Array.data[0]
+      value: 
+      objectReference: {fileID: 5024009746357069194, guid: ec3f674830402cc45bce805cf6493db7, type: 3}
+    - target: {fileID: 8012353166351995741, guid: 7e8e2f7fd6f178a429380a72218be379, type: 3}
+      propertyPath: visualHitEffect.Array.data[1]
+      value: 
+      objectReference: {fileID: 2955623459812423943, guid: f5507a8c6a22c404ab324980c4e8a11b, type: 3}
+    - target: {fileID: 8012353166351995741, guid: 7e8e2f7fd6f178a429380a72218be379, type: 3}
+      propertyPath: visualHitEffect.Array.data[2]
+      value: 
+      objectReference: {fileID: 8443315704496310910, guid: 6ef35fa36e3a65043b2d800600204bdd, type: 3}
     m_RemovedComponents:
     - {fileID: 8012353166351995742, guid: 7e8e2f7fd6f178a429380a72218be379, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 7e8e2f7fd6f178a429380a72218be379, type: 3}

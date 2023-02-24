@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Saber : MonoBehaviour
 {
+    public GameObject[] visualHitEffect;
     public bool isLeft;
     public Light wrongHitIndicator;
     public LayerMask layer;
@@ -12,6 +13,9 @@ public class Saber : MonoBehaviour
     private bool entered = false;
     private void FixedUpdate()
     {
+        //Debug.DrawRay(transform.position, transform.forward, Color.blue, 1f);
+        //Debug.DrawRay(transform.position, transform.right, Color.red, 1f);
+        //Debug.DrawRay(transform.position, transform.up, Color.green, 1f);
         if (wrongHitIndicator.color == Color.red) { 
             frame++;
             if (frame > 1) {
@@ -22,6 +26,7 @@ public class Saber : MonoBehaviour
     }
     private void OnTriggerEnter(Collider collision)
     {
+        print("on trigger");
         int performance = 0;
         if (collision.gameObject.layer == LayerMask.NameToLayer("Sword"))
         {
@@ -49,12 +54,13 @@ public class Saber : MonoBehaviour
             entered = false;
     }
     private void OnCollisionEnter(Collision collision)
-    {/*
-        Debug.Log("Collision detected");
+    {
+        //the first point of collision
+        Vector3 collisionEnterPoint = collision.contacts[0].point;
+        //for effect
         int performance = 0;
         if (collision.gameObject.layer == LayerMask.NameToLayer("Sword"))
         {
-            source.PlayOneShot(hitAudio);
             float saberAngle = Vector3.Angle(transform.up, collision.transform.forward);
             if (saberAngle >= 86 && saberAngle <= 94)
                 performance = 3;
@@ -62,23 +68,28 @@ public class Saber : MonoBehaviour
                 performance = 2;
             else
                 performance = 1;
-            //if (UserPref.GAME_MODE)
-            // Destroy(other.gameObject);
-            print("angle: " + Vector3.Angle(transform.forward, collision.transform.forward));
-            print("sword detected");
-            collision.gameObject.SendMessage("Hit", new double[] { performance, saberAngle, isLeft ? 0 : 1});
+            spawnEffect(collisionEnterPoint);
+            collision.gameObject.SendMessage("Hit", new double[] { performance, saberAngle, isLeft ? 0 : 1 });
 
-            vibration(100, 1, 255);
         }
 
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Body"))
+        else if (!entered && collision.gameObject.layer == LayerMask.NameToLayer("Body"))
         {
-            collision.gameObject.SendMessage("Hit", new double[] { performance });
+            entered = true;
+            collision.gameObject.SendMessage("Hit", new double[] { -1 });
             wrongHitIndicator.color = Color.red;
         }
-        */
     }
-   
 
-    
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Body"))
+            entered = false;
+    }
+    private void spawnEffect(Vector3 spawnPos) {
+        int r = Random.Range(0,3);
+        GameObject newEffect = Instantiate(visualHitEffect[r]);
+        newEffect.transform.position = spawnPos;
+        newEffect.transform.LookAt(Camera.main.transform);
+    }
 }

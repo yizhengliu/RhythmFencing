@@ -6,6 +6,7 @@ using static Unity.VisualScripting.Member;
 
 public class AnimationStateControllerClassic : MonoBehaviour
 {
+    public GameObject[] actionHelpers;
     private GameObject controller;
     private Animator animator;
     private Vector3 stationaryPoint;
@@ -13,13 +14,16 @@ public class AnimationStateControllerClassic : MonoBehaviour
     // Start is called before the first frame update
     private long startTime;
     private Transform destination;
+    private Quaternion stationaryRotation;
     private int spawner;
     private int counter;
+    private bool firstFrameOfAction = true;
     void Start()
     {
         animator = GetComponent<Animator>();
         startTime = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond;
     }
+    
     private void FixedUpdate()
     {
         //if the z coordi is reached
@@ -28,18 +32,22 @@ public class AnimationStateControllerClassic : MonoBehaviour
         {
             //if it is running
             //distance needs to be checked
-            if (Vector3.Distance(transform.position, destination.position) < 2.4273f)
+            //if (Vector3.Distance(transform.position, destination.position) < 2.4273f)
+            if (Vector3.Distance(transform.position, destination.position) < 3f)
             {
                 //Quaternion rot = transform.rotation;
                 //rot.y = Quaternion.LookRotation(transform.position - destination.position).y;
                 stationaryPoint = transform.position;
+                stationaryRotation = transform.rotation;
                 switch (behaviour)
                 {
                     case 0:
                         animator.SetBool("AnotherSlash", true);
+                        actionHelpers[0].SetActive(true);
                         break;
                     case 1:
                         animator.SetBool("NormalSlash", true);
+                        actionHelpers[1].SetActive(true);
                         break;
                 }
 
@@ -47,6 +55,14 @@ public class AnimationStateControllerClassic : MonoBehaviour
         }
         else
         {
+            if (firstFrameOfAction)
+            {
+                transform.position = stationaryPoint;
+                //transform.rotation = stationaryRotation;
+                transform.rotation = new Quaternion(stationaryRotation.x,
+                    stationaryRotation.y , stationaryRotation.z, stationaryRotation.w - 0.65f);
+                firstFrameOfAction = false;
+            }
             //Vector3 pos = new Vector3(stationaryPoint.x, animator.rootPosition.y, stationaryPoint.z);
             //transform.position = pos;
         }

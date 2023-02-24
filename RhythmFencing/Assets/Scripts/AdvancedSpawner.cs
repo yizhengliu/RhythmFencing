@@ -20,7 +20,8 @@ public class AdvancedSpawner : MonoBehaviour
     private AudioSource currentAudio;
     public GameObject Enemy;
     public Transform[] SpawnPoints;
-    public Transform destination;
+    public Transform playerPos;
+    private Transform destination;
 
     private int indicatorFrameCount = 0;
     private struct Beat {
@@ -47,6 +48,7 @@ public class AdvancedSpawner : MonoBehaviour
         currentAudio = GetComponent<AudioSource>();
         importer.Loaded += OnLoaded;
         importer.Import(UserPref.SONG_FILEPATH);
+        destination = playerPos;
     }
 
     private void FixedUpdate()
@@ -156,7 +158,6 @@ public class AdvancedSpawner : MonoBehaviour
         if (counter < beats.Length && timer > beats[counter].timing)
         {
             int ran = Random.Range(0, 4);
-            ran = 0;
             GameObject newEnemy = Instantiate(Enemy, SpawnPoints[ran]);
             newEnemy.SendMessage("setBehaviour", beats[counter].behaviour);
             newEnemy.SendMessage("setDestination", destination);
