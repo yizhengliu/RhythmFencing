@@ -3,7 +3,7 @@ public static class UserPref
     public static float HP = 100;
     //false is normal, true is classic
     public static bool GAME_MODE = false;
-    public static int DIFFICULTY_LEVEL = 0;
+    public static int DIFFICULTY_LEVEL = 2;
 
     public static string SONG_FILEPATH = "C:\\Users\\edbod\\Music\\September - Cry For You (UK Radio Edit).mp3";
     //public static string SONG_FILEPATH = "C:\\Users\\27571\\Music\\September - Cry For You (UK Radio Edit).mp3";

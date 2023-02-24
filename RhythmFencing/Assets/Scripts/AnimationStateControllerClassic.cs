@@ -28,7 +28,7 @@ public class AnimationStateControllerClassic : MonoBehaviour
         {
             //if it is running
             //distance needs to be checked
-            if (Vector3.Distance(transform.position, destination.position) < 3f)
+            if (Vector3.Distance(transform.position, destination.position) < 2.4273f)
             {
                 //Quaternion rot = transform.rotation;
                 //rot.y = Quaternion.LookRotation(transform.position - destination.position).y;
