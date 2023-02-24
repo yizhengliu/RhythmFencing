@@ -35,7 +35,9 @@ public class TestController : MonoBehaviour
             helper.enabled = false;
         if (counter == beats.Length)
         {
+#if UNITY_EDITOR
             saveUserBeats();
+#endif
             SceneManager.LoadScene("StartMenu");
         }
         //beatDetectionButton.text;
@@ -138,6 +140,8 @@ public class TestController : MonoBehaviour
             sw.WriteLine(f);
         }
         sw.Close();
+#if UNITY_EDITOR
         UnityEditor.AssetDatabase.ImportAsset(path);
+#endif
     }
 }

@@ -1008,9 +1008,6 @@ MonoBehaviour:
   helper: {fileID: 617917986}
   loadingCanvas: {fileID: 41922614}
   loadingProgress: {fileID: 1717210171}
-  SAMPLES_PER_POINT: 1024
-  SCALE: 300
-  TOLERANCE: 1
   importer: {fileID: 1421193857}
   beatDetectionButton: {fileID: 878209152}
   userDetectionButton: {fileID: 444376868}

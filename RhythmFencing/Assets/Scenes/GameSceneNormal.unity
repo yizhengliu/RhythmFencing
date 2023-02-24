@@ -291,10 +291,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bc637423d127054d839bc9b3205f904, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  visualHitEffect:
-  - {fileID: 5024009746357069194, guid: ec3f674830402cc45bce805cf6493db7, type: 3}
-  - {fileID: 2955623459812423943, guid: f5507a8c6a22c404ab324980c4e8a11b, type: 3}
-  - {fileID: 8443315704496310910, guid: 6ef35fa36e3a65043b2d800600204bdd, type: 3}
   isLeft: 0
   wrongHitIndicator: {fileID: 1866115033}
   layer:
@@ -978,6 +974,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f228fe5c1208d87468494579a7a44515, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visualHitEffect:
+  - {fileID: 5024009746357069194, guid: ec3f674830402cc45bce805cf6493db7, type: 3}
+  - {fileID: 2955623459812423943, guid: f5507a8c6a22c404ab324980c4e8a11b, type: 3}
+  - {fileID: 8443315704496310910, guid: 6ef35fa36e3a65043b2d800600204bdd, type: 3}
   actionHelpers:
   - {fileID: 1920172486}
   - {fileID: 1162983804}
@@ -1496,6 +1496,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f228fe5c1208d87468494579a7a44515, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visualHitEffect:
+  - {fileID: 5024009746357069194, guid: ec3f674830402cc45bce805cf6493db7, type: 3}
+  - {fileID: 2955623459812423943, guid: f5507a8c6a22c404ab324980c4e8a11b, type: 3}
+  - {fileID: 8443315704496310910, guid: 6ef35fa36e3a65043b2d800600204bdd, type: 3}
   actionHelpers:
   - {fileID: 2060913160}
   - {fileID: 1718636975}
@@ -1979,6 +1983,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f228fe5c1208d87468494579a7a44515, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visualHitEffect:
+  - {fileID: 5024009746357069194, guid: ec3f674830402cc45bce805cf6493db7, type: 3}
+  - {fileID: 2955623459812423943, guid: f5507a8c6a22c404ab324980c4e8a11b, type: 3}
+  - {fileID: 8443315704496310910, guid: 6ef35fa36e3a65043b2d800600204bdd, type: 3}
   actionHelpers:
   - {fileID: 82796783}
   - {fileID: 2025089755}

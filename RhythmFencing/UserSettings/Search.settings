@@ -81,6 +81,7 @@ providers = {
 objectSelectors = {
 }
 recentSearches = [
+	"p"
 	"pa"
 	"Compress Assets on Import"
 	"re"

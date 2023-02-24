@@ -6,6 +6,7 @@ using static Unity.VisualScripting.Member;
 
 public class AnimationStateControllerClassic : MonoBehaviour
 {
+    public GameObject[] visualHitEffect;
     public GameObject[] actionHelpers;
     private GameObject controller;
     private Animator animator;
@@ -18,6 +19,7 @@ public class AnimationStateControllerClassic : MonoBehaviour
     private int spawner;
     private int counter;
     private bool firstFrameOfAction = true;
+    private Vector3 collisionPos;
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -112,6 +114,7 @@ public class AnimationStateControllerClassic : MonoBehaviour
                 //source.PlayOneShot(clip[behaviour]);
                 controller.SendMessage("playHitEffect", behaviour);
                 vibration(75, 2, 255, performance[2] == 0 ? true : false);
+                spawnEffect();
                 print("from saber");
                 controller.SendMessage("Hit", new double[] { performance[0], counter, performance[1] });
                 Destroy(this.gameObject);
@@ -128,5 +131,14 @@ public class AnimationStateControllerClassic : MonoBehaviour
             OVRHaptics.LeftChannel.Preempt(hapticsClip);
         else
             OVRHaptics.RightChannel.Preempt(hapticsClip);
+    }
+    private void spawnEffect() {
+        int r = Random.Range(0, 3);
+        GameObject newEffect = Instantiate(visualHitEffect[r]);
+        newEffect.transform.position = collisionPos;
+        newEffect.transform.LookAt(Camera.main.transform);
+    }
+    public void passPos(Vector3 cep) {
+        collisionPos = cep;
     }
 }

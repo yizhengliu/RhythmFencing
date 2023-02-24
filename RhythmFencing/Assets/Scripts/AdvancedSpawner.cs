@@ -88,7 +88,9 @@ public class AdvancedSpawner : MonoBehaviour
             spawn();
             if (counter == beats.Length && !currentAudio.isPlaying)
             {
+                #if UNITY_EDITOR
                 saveUserPerformance();
+                #endif
                 SceneManager.LoadScene("GameOver");
             }
         }
@@ -209,7 +211,9 @@ public class AdvancedSpawner : MonoBehaviour
 
             if (UserPref.HP == 0)
             {
+#if UNITY_EDITOR
                 saveUserPerformance();
+#endif
                 SceneManager.LoadScene("GameOver");
             }
 
@@ -264,7 +268,9 @@ public class AdvancedSpawner : MonoBehaviour
             sw.WriteLine("\t" + sb.ToString());
         }
         sw.Close();
+#if UNITY_EDITOR
         UnityEditor.AssetDatabase.ImportAsset(path);
+#endif
     }
 
     private void playHitEffect(int behaviour) {

@@ -1,9 +1,11 @@
+using Oculus.Interaction;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 public class AnimationStateControllerNormal : MonoBehaviour
 {
+    public GameObject[] visualHitEffect;
     public GameObject[] actionHelpers;
     public AudioClip[] clip;
     public Light lightIndicator;
@@ -18,6 +20,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
     private bool started = false;
     private AudioSource source;
 
+    private Vector3 collisionPos;
     private float indicatorTimer = 0;
     private int indicatorCount = 0;
     private bool firstUpdate = true;
@@ -171,6 +174,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
                 beenHitted = true;
                 source.PlayOneShot(clip[behaviour]);
                 vibration(75, 2, 255, performance[2] == 0 ? true : false);
+                spawnEffect();
                 print("Im hitted");
                 controller.SendMessage("Hit", new double[] { performance[0], counter, performance[1] });
             }
@@ -205,5 +209,17 @@ public class AnimationStateControllerNormal : MonoBehaviour
             OVRHaptics.LeftChannel.Preempt(hapticsClip);
         else
             OVRHaptics.RightChannel.Preempt(hapticsClip);
+    }
+
+    private void spawnEffect()
+    {
+        int r = Random.Range(0, 3);
+        GameObject newEffect = Instantiate(visualHitEffect[r]);
+        newEffect.transform.position = collisionPos;
+        newEffect.transform.LookAt(Camera.main.transform);
+    }
+    public void passPos(Vector3 cep)
+    {
+        collisionPos = cep;
     }
 }

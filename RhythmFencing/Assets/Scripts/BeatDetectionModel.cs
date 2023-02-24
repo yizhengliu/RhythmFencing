@@ -152,7 +152,9 @@ public static class BeatDetectionModel {
         }
 
         sw.Close();
+#if UNITY_EDITOR
         UnityEditor.AssetDatabase.ImportAsset(path);
+#endif
     }
 
     private static void RamerDouglasPeucker(List<Point> pointList, float epsilon, ref List<Point> output) {

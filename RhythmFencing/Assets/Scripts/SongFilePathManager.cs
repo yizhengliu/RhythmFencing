@@ -19,9 +19,12 @@ public class SongFilePathManager : MonoBehaviour
     }
 
     private void addOptions(Dropdown dropdown) {
-        string audioPath = System.Environment.GetFolderPath(
+        string audioPath;
+        audioPath = "/sdcard/Download";
+        #if UNITY_EDITOR
+        audioPath = System.Environment.GetFolderPath(
         System.Environment.SpecialFolder.MyMusic);
-
+        #endif
         string[] allowedFileTypes = new string[] { ".mp3", ".ogg", ".wav", ".aiff", ".aif" };
         
         filteredAudioFilePaths = Directory

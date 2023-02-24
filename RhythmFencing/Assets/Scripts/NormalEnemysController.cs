@@ -83,7 +83,9 @@ public class NormalEnemysController : MonoBehaviour
             SendMessages();
             if (counter == beats.Length && !currentAudio.isPlaying) {
                 UserPref.LOADED = false;
+#if UNITY_EDITOR
                 saveUserPerformance();
+#endif
                 SceneManager.LoadScene("GameOver");
             }
         }
@@ -196,7 +198,9 @@ public class NormalEnemysController : MonoBehaviour
 
             if (UserPref.HP == 0)
             {
+#if UNITY_EDITOR
                 saveUserPerformance();
+#endif
                 SceneManager.LoadScene("GameOver");
             }
             
@@ -250,6 +254,8 @@ public class NormalEnemysController : MonoBehaviour
             sw.WriteLine("\t" + sb.ToString());
         }
         sw.Close();
+#if UNITY_EDITOR
         UnityEditor.AssetDatabase.ImportAsset(path);
+#endif
     }
 }

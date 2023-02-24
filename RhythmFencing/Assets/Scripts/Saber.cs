@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Saber : MonoBehaviour
 {
-    public GameObject[] visualHitEffect;
+
     public bool isLeft;
     public Light wrongHitIndicator;
     public LayerMask layer;
@@ -68,8 +68,8 @@ public class Saber : MonoBehaviour
                 performance = 2;
             else
                 performance = 1;
-            spawnEffect(collisionEnterPoint);
-            collision.gameObject.SendMessage("Hit", new double[] { performance, saberAngle, isLeft ? 0 : 1 });
+            collision.gameObject.SendMessage("passPos", collisionEnterPoint);
+           collision.gameObject.SendMessage("Hit", new double[] { performance, saberAngle, isLeft ? 0 : 1 });
 
         }
 
@@ -86,10 +86,5 @@ public class Saber : MonoBehaviour
         if (collision.gameObject.layer == LayerMask.NameToLayer("Body"))
             entered = false;
     }
-    private void spawnEffect(Vector3 spawnPos) {
-        int r = Random.Range(0,3);
-        GameObject newEffect = Instantiate(visualHitEffect[r]);
-        newEffect.transform.position = spawnPos;
-        newEffect.transform.LookAt(Camera.main.transform);
-    }
+    
 }
