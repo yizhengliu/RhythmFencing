@@ -2126,7 +2126,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2131047744}
-  - component: {fileID: 2131047743}
   - component: {fileID: 2131047742}
   - component: {fileID: 2131047745}
   m_Layer: 0
@@ -2232,18 +2231,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &2131047743
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2131047741}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c85ca24aed0de7f4bb834c92b727d65b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &2131047744
 Transform:
   m_ObjectHideFlags: 0
@@ -2279,7 +2266,7 @@ MonoBehaviour:
   combo: {fileID: 161267031}
   loadingCanvas: {fileID: 922287807}
   loadingProgress: {fileID: 119759011}
-  importer: {fileID: 2131047743}
+  importer: {fileID: 0}
   enemies:
   - {fileID: 1661330226}
   - {fileID: 1106288795}

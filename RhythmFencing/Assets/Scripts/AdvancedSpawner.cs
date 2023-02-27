@@ -1,8 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -15,7 +18,6 @@ public class AdvancedSpawner : MonoBehaviour
     public Text score;
     public Text combo;
     public Canvas loadingCanvas;
-    public AudioImporter importer;
     public Text loadingProgress;
     private AudioSource currentAudio;
     public GameObject Enemy;
@@ -43,14 +45,53 @@ public class AdvancedSpawner : MonoBehaviour
         public int category;
     }
     private List<Performance> userPerformances = new List<Performance>();
+    private AudioClip clip = null;
+    private UnityWebRequest uwr;
     private void Awake(){
         difficultySetting();
         currentAudio = GetComponent<AudioSource>();
-        importer.Loaded += OnLoaded;
-        importer.Import(UserPref.SONG_FILEPATH);
+        //importer.Loaded += OnLoaded;
+        //importer.Import(UserPref.SONG_FILEPATH);
         destination = playerPos;
     }
+    private async void Start()
+    {
+        clip = await LoadClip();
+    }
+    async Task<AudioClip> LoadClip()
+    {
+        AudioClip clip = null;
+        string[] allowedFileTypes = new string[] { ".mp3", ".ogg", ".wav", ".aiff", ".aif" };
+        //file.ToLower().EndsWith
+        if (UserPref.SONG_FILEPATH.ToLower().EndsWith(allowedFileTypes[0]))
+            uwr = UnityWebRequestMultimedia.GetAudioClip(UserPref.SONG_FILEPATH, AudioType.MPEG);
+        else if (UserPref.SONG_FILEPATH.ToLower().EndsWith(allowedFileTypes[1]))
+            uwr = UnityWebRequestMultimedia.GetAudioClip(UserPref.SONG_FILEPATH, AudioType.OGGVORBIS);
+        else if (UserPref.SONG_FILEPATH.ToLower().EndsWith(allowedFileTypes[2]))
+            uwr = UnityWebRequestMultimedia.GetAudioClip(UserPref.SONG_FILEPATH, AudioType.WAV);
+        else if (UserPref.SONG_FILEPATH.ToLower().EndsWith(allowedFileTypes[3]) || UserPref.SONG_FILEPATH.ToLower().EndsWith(allowedFileTypes[4]))
+            uwr = UnityWebRequestMultimedia.GetAudioClip(UserPref.SONG_FILEPATH, AudioType.AIFF);
 
+        uwr.SendWebRequest();
+
+        // wrap tasks in try/catch, otherwise it'll fail silently
+        try
+        {
+            while (!uwr.isDone) await Task.Delay(0);
+
+            if (uwr.isNetworkError || uwr.isHttpError) Debug.Log($"{uwr.error}");
+            else
+            {
+                clip = DownloadHandlerAudioClip.GetContent(uwr);
+            }
+        }
+        catch (Exception err)
+        {
+            Debug.Log($"{err.Message}, {err.StackTrace}");
+        }
+
+        return clip;
+    }
     private void FixedUpdate()
     {
         if (lightIndicator.enabled)
@@ -63,10 +104,13 @@ public class AdvancedSpawner : MonoBehaviour
             }
         }
         HPBar.fillAmount = UserPref.HP / 100f;
-        if (!importer.isDone)
-            loadingProgress.text = "Loading..." + (Mathf.Round(importer.progress * 1000) / 10) + "%";
-        if (importer.isDone && !loaded)
+        if (clip == null)
         {
+            loadingProgress.text = "Loading..." + (Mathf.Round(uwr.downloadProgress * 1000) / 10) + "%";
+        }
+        if (!loaded && clip != null)
+        {
+            currentAudio.clip = clip;
             Destroy(loadingCanvas);
             currentSong = BeatDetectionModel.initializeLineOfTheAudio(currentAudio);
             BeatDetectionModel.simplifyLine(ref currentSong);
@@ -94,9 +138,6 @@ public class AdvancedSpawner : MonoBehaviour
                 SceneManager.LoadScene("GameOver");
             }
         }
-    }
-    private void OnLoaded(AudioClip clip) {
-        currentAudio.clip = clip;
     }
 
     private void addToBeats() {
@@ -242,7 +283,11 @@ public class AdvancedSpawner : MonoBehaviour
     }
     public void saveUserPerformance()
     {
-        string path = "Assets/Result/UserPerformance.txt";
+        string path = "/sdcard/Download/UserPerformance.txt";
+#if UNITY_EDITOR
+        path = "Assets/Result/UserPerformance.txt";
+#endif
+        
         StreamWriter sw = new StreamWriter(path, true);
         sw.WriteLine(string.Format("\tMaxCombos = {0}", UserPref.MAX_COMBO));
         sw.WriteLine(string.Format("\tScore = {0}", UserPref.SCORE));

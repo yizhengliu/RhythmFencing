@@ -19,22 +19,38 @@ public class SongFilePathManager : MonoBehaviour
     }
 
     private void addOptions(Dropdown dropdown) {
+        Debug.Log(Application.persistentDataPath);
         string audioPath;
-        audioPath = "/sdcard/Download";
-        #if UNITY_EDITOR
+        audioPath = "/sdcard/Music";
+        string[] allowedFileTypes = new string[] { ".mp3", ".ogg", ".wav", ".aiff", ".aif" };
+        List<string> fileNames = new List<string>();
+#if UNITY_EDITOR
         audioPath = System.Environment.GetFolderPath(
         System.Environment.SpecialFolder.MyMusic);
-        #endif
-        string[] allowedFileTypes = new string[] { ".mp3", ".ogg", ".wav", ".aiff", ".aif" };
-        
         filteredAudioFilePaths = Directory
                 .GetFiles(audioPath, "*.*")
                 .Where(file => allowedFileTypes.Any(file.ToLower().EndsWith))
                 .ToList();
-
-        List<string> fileNames = new List<string>();
-        foreach (string s in filteredAudioFilePaths) {
+        foreach (string s in filteredAudioFilePaths)
+        {
             fileNames.Add(s.Replace(audioPath + "\\", ""));
+        }
+        songFileNameDropDown.AddOptions(fileNames);
+        Debug.Log(filteredAudioFilePaths.Count);
+        foreach (string s in filteredAudioFilePaths)
+        {
+            Debug.Log(s);
+        }
+        UserPref.SONG_FILEPATH = filteredAudioFilePaths[dropdown.value];
+        return;
+#endif
+        filteredAudioFilePaths = Directory
+                .GetFiles(audioPath, "*.*")
+                .Where(file => allowedFileTypes.Any(file.ToLower().EndsWith))
+                .ToList();
+        foreach (string s in filteredAudioFilePaths)
+        {
+            fileNames.Add(s.Replace(audioPath + "/", ""));
         }
         songFileNameDropDown.AddOptions(fileNames);
         Debug.Log(filteredAudioFilePaths.Count);
