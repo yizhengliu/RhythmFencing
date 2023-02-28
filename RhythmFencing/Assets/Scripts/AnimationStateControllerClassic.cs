@@ -11,7 +11,7 @@ public class AnimationStateControllerClassic : MonoBehaviour
     private GameObject controller;
     private Animator animator;
     private Vector3 stationaryPoint;
-    private int behaviour;
+    private int behaviour = -1;
     // Start is called before the first frame update
     private long startTime;
     private Transform destination;
@@ -23,7 +23,7 @@ public class AnimationStateControllerClassic : MonoBehaviour
     void Start()
     {
         animator = GetComponent<Animator>();
-        startTime = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond;
+        
     }
     
     private void FixedUpdate()
@@ -37,6 +37,7 @@ public class AnimationStateControllerClassic : MonoBehaviour
             //if (Vector3.Distance(transform.position, destination.position) < 2.4273f)
             if (Vector3.Distance(transform.position, destination.position) < 3f)
             {
+                startTime = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond;
                 //Quaternion rot = transform.rotation;
                 //rot.y = Quaternion.LookRotation(transform.position - destination.position).y;
                 stationaryPoint = transform.position;
@@ -75,8 +76,9 @@ public class AnimationStateControllerClassic : MonoBehaviour
         Destroy(this.gameObject);
     }
     public void actionPerformed(int animationType) {
+        string at_ = behaviour == 0 ? "Another Slash" : "Normal Slash";
         long result = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond - startTime;
-        Debug.Log("" + result + ", type : " + animationType + ", spawner : " + spawner);
+        Debug.Log("" + result + ", type : " + at_ + ", spawner : " + spawner);
     }
     public void setController(GameObject controller) {
         this.controller = controller;
@@ -102,6 +104,8 @@ public class AnimationStateControllerClassic : MonoBehaviour
     {
         if (performance[0] == -1)
         {
+            vibration(35, 2, 255, performance[1] == 0 ? true : false);
+            controller.SendMessage("playHitEffect", 2);
             controller.SendMessage("Hit", new double[] { -1, counter });
             Destroy(this.gameObject);
             return;

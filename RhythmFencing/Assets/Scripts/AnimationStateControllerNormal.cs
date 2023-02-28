@@ -5,6 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 public class AnimationStateControllerNormal : MonoBehaviour
 {
+    public Transform cam;
     public GameObject[] visualHitEffect;
     public GameObject[] actionHelpers;
     public AudioClip[] clip;
@@ -38,8 +39,10 @@ public class AnimationStateControllerNormal : MonoBehaviour
     }
     private void Update()
     {
-         //record the initial position and rotation
+        //print(index + "  "+ Vector3.Distance(transform.position, cam.position));
+        //record the initial position and rotation
         if (firstUpdate) {
+            
             stationaryRotation = transform.rotation;
             stationaryPoint = transform.position;
             firstUpdate = false;
@@ -61,13 +64,13 @@ public class AnimationStateControllerNormal : MonoBehaviour
         if (started)
         {
             indicatorTimer += Time.deltaTime;
-            //type 0 another slash: 1135 809
-            //type 1 normal slash: 584 585
+            //type 0 another slash: 1135 804
+            //type 1 normal slash: 584 577
             if (behaviour == 0)
             {
 
                 //another slash
-                if (indicatorTimer > 0.809)
+                if (indicatorTimer >= 0.804)
                 {
                     indicatorTimer = 0;
                     started = false;
@@ -77,7 +80,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
             else
             {
                 //normal slash
-                if (indicatorTimer > 0.585)
+                if (indicatorTimer >= 0.577)
                 {
                     indicatorTimer = 0;
                     started = false;
@@ -106,7 +109,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
         
         //print the time the action performed
         long result = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond - startTime;
-        //Debug.Log("action performed: " + result + ", type : " + at_);
+        Debug.Log("action performed: " + result + ", type : " + at_);
         //lightIndicator.enabled = true;
         
     }
@@ -114,6 +117,8 @@ public class AnimationStateControllerNormal : MonoBehaviour
     //
     public void startAction(int i)
     {
+        if(started)
+            return;
         Debug.Log("Start Action"); 
         //reset before action
         resetTransform();
@@ -180,6 +185,8 @@ public class AnimationStateControllerNormal : MonoBehaviour
             }
             else if (performance[0] == -1)
             {
+                source.PlayOneShot(clip[2]);
+                vibration(35, 2, 255, performance[1] == 0 ? true : false);
                 print("Body hitted");
                 controller.SendMessage("Hit", new double[] { -1, counter });
             }
@@ -194,6 +201,8 @@ public class AnimationStateControllerNormal : MonoBehaviour
         else {
             if (performance[0] == -1)
             {
+                source.PlayOneShot(clip[2]);
+                vibration(35, 2, 255, performance[1] == 0 ? true : false);
                 print("Body hitted");
                 controller.SendMessage("Hit", new double[] { -1, counter });
             }

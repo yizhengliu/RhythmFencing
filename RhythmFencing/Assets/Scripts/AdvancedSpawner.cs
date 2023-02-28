@@ -47,6 +47,8 @@ public class AdvancedSpawner : MonoBehaviour
     private List<Performance> userPerformances = new List<Performance>();
     private AudioClip clip = null;
     private UnityWebRequest uwr;
+    private float[] spawnerCooldowns = new float[] { 1.2f,1.2f,1.2f,1.2f};
+    private bool[] willFlash;
     private void Awake(){
         difficultySetting();
         currentAudio = GetComponent<AudioSource>();
@@ -54,10 +56,12 @@ public class AdvancedSpawner : MonoBehaviour
         //importer.Import(UserPref.SONG_FILEPATH);
         destination = playerPos;
     }
+
     private async void Start()
     {
         clip = await LoadClip();
     }
+
     async Task<AudioClip> LoadClip()
     {
         AudioClip clip = null;
@@ -124,6 +128,8 @@ public class AdvancedSpawner : MonoBehaviour
         if (loaded)
         {
             timer += Time.deltaTime;
+            for (int i = 0; i < spawnerCooldowns.Length; i++)
+                spawnerCooldowns[i] -= Time.deltaTime;
             if (!currentAudio.isPlaying)
             {
                 if (timer >4.535f)
@@ -132,9 +138,7 @@ public class AdvancedSpawner : MonoBehaviour
             spawn();
             if (counter == beats.Length && !currentAudio.isPlaying)
             {
-                #if UNITY_EDITOR
                 saveUserPerformance();
-                #endif
                 SceneManager.LoadScene("GameOver");
             }
         }
@@ -144,8 +148,11 @@ public class AdvancedSpawner : MonoBehaviour
         BeatDetectionModel.Point[] upBeats = currentSong.Where(x => x.isBeat == true).ToArray();
         beats = new Beat[upBeats.Length];
         flashing = new float[upBeats.Length];
-        //type 0 another slash: 809 4535
-        //type 1 normal slash: 585 4320
+        willFlash = new bool[upBeats.Length];
+        for(int i = 0;i<willFlash.Length ;i++)
+            willFlash[i] = false;
+        //type 0 another slash: 809 4735
+        //type 1 normal slash: 585 4513
         for (int i = 0; i < beats.Length; i++)
         {
             beats[i].behaviour = Random.Range(0, 2);
@@ -154,11 +161,11 @@ public class AdvancedSpawner : MonoBehaviour
             {
                 case 0:
                     beats[i].timing = upBeats[i].timeInSong;
-                    flashing[i] = beats[i].timing + 4.535f;
+                    flashing[i] = beats[i].timing + 4.735f;
                     break;
                 case 1:
-                    beats[i].timing = upBeats[i].timeInSong + 0.215f;
-                    flashing[i] = beats[i].timing + 4.32f;
+                    beats[i].timing = upBeats[i].timeInSong + 0.222f;
+                    flashing[i] = beats[i].timing + 4.513f;
                     break;
             }
 
@@ -184,10 +191,12 @@ public class AdvancedSpawner : MonoBehaviour
             switch (beats[i].behaviour)
             {
                 case 0:
-                    beats[i].timing = timing[i];
+                    beats[i].timing = timing[i]; 
+                    flashing[i] = beats[i].timing + 4.735f;
                     break;
                 case 1:
-                    beats[i].timing = timing[i] + 0.551f;
+                    beats[i].timing = timing[i] + 0.222f;
+                    flashing[i] = beats[i].timing + 4.513f;
                     break;
             }
         }
@@ -195,18 +204,32 @@ public class AdvancedSpawner : MonoBehaviour
    
     private void spawn() {
         if (lightCounter < flashing.Length && timer > flashing[lightCounter]) {
-            lightIndicator.enabled = true;
+            if (willFlash[lightCounter])
+                lightIndicator.enabled = true;
             lightCounter++;
         }
         if (counter < beats.Length && timer > beats[counter].timing)
         {
-            int ran = Random.Range(0, 4);
-            GameObject newEnemy = Instantiate(Enemy, SpawnPoints[ran]);
-            newEnemy.SendMessage("setBehaviour", beats[counter].behaviour);
-            newEnemy.SendMessage("setDestination", destination);
-            newEnemy.SendMessage("setSpawner", ran);
-            newEnemy.SendMessage("setCounter", counter);
-            newEnemy.SendMessage("setController", this.gameObject);
+            List<int> possible = new List<int>();
+            for (int i = 0; i < spawnerCooldowns.Length; i++)
+                if (spawnerCooldowns[i] <= 0)
+                    possible.Add(i);
+            //if there is a possible pos
+            if (possible.Count > 0) {
+                //choose an item
+                int ranItem = Random.Range(0, possible.Count);
+                //get its index
+                int ran = possible[ranItem];
+                GameObject newEnemy = Instantiate(Enemy, SpawnPoints[ran]);
+                newEnemy.SendMessage("setBehaviour", beats[counter].behaviour);
+                newEnemy.SendMessage("setDestination", destination);
+                newEnemy.SendMessage("setSpawner", ran);
+                newEnemy.SendMessage("setCounter", counter);
+                newEnemy.SendMessage("setController", this.gameObject);
+                spawnerCooldowns[possible[ranItem]] = 1.2f;
+                willFlash[counter] = true;
+            }
+            
             counter++;
         }
     }
@@ -252,9 +275,7 @@ public class AdvancedSpawner : MonoBehaviour
 
             if (UserPref.HP == 0)
             {
-#if UNITY_EDITOR
                 saveUserPerformance();
-#endif
                 SceneManager.LoadScene("GameOver");
             }
 
@@ -279,7 +300,24 @@ public class AdvancedSpawner : MonoBehaviour
 
         Debug.Log("score: " + UserPref.SCORE);
         score.text = "Score: " + UserPref.SCORE;
-        combo.text = UserPref.COMBO + "\nCOMBO";
+        string addition = "";
+        combo.color = Color.white;
+        if (performance == 1)
+        {
+            addition = "NORMAL";
+            combo.color = Color.cyan;
+        }
+        else if (performance == 2)
+        {
+            addition = "GOOD";
+            combo.color = Color.green;
+        }
+        else if (performance == 3)
+        {
+            combo.color = Color.yellow;
+            addition = "PERFECT";
+        }
+        combo.text = UserPref.COMBO + "\nCOMBO\n" + addition;
     }
     public void saveUserPerformance()
     {

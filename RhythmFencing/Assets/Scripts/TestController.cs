@@ -39,9 +39,7 @@ public class TestController : MonoBehaviour
             helper.enabled = false;
         if (counter == beats.Length)
         {
-#if UNITY_EDITOR
             saveUserBeats();
-#endif
             SceneManager.LoadScene("StartMenu");
         }
         //beatDetectionButton.text;
@@ -117,6 +115,22 @@ public class TestController : MonoBehaviour
         if (clip == null)
         {
             loadingProgress.text = "Loading..." + (Mathf.Round(uwr.downloadProgress * 1000) / 10) + "%";
+            if (uwr.result == UnityWebRequest.Result.ConnectionError)
+            {
+                Debug.Log("Connection error");
+                loadingProgress.text = "Connection error\n" + uwr.responseCode;
+            }
+            else if (uwr.result == UnityWebRequest.Result.ProtocolError)
+            {
+                Debug.Log("Protocol error");
+                loadingProgress.text = "Protocol error";
+            }
+            else if (uwr.result == UnityWebRequest.Result.DataProcessingError)
+            {
+                Debug.Log("Data Processing error");
+                loadingProgress.text = "Data Processing error";
+            }
+            
         }
         if (keyPressed) {
             keyPressed = false;

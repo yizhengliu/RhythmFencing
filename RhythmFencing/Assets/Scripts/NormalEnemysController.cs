@@ -6,7 +6,6 @@ using System;
 using Random = UnityEngine.Random;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using System.Collections;
 using System.Threading.Tasks;
 using UnityEngine.Networking;
 
@@ -124,14 +123,12 @@ public class NormalEnemysController : MonoBehaviour
             timer += Time.deltaTime;
             if (!currentAudio.isPlaying)
                 //time
-                if (timer > 0.809f && timer < 30f)
+                if (timer > 0.804f && timer < 30f)
                     currentAudio.Play();
             SendMessages();
             if (counter == beats.Length && !currentAudio.isPlaying) {
                 UserPref.LOADED = false;
-#if UNITY_EDITOR
                 saveUserPerformance();
-#endif
                 SceneManager.LoadScene("GameOver");
             }
         }
@@ -140,8 +137,8 @@ public class NormalEnemysController : MonoBehaviour
     private void addToBeats() {
         BeatDetectionModel.Point[] upBeats = currentSong.Where(x => x.isBeat == true).ToArray();
         beats = new Beat[upBeats.Length];
-        //type 0 another slash: 1135 809
-        //type 1 normal slash: 584 585
+        //type 0 another slash: 1135 804
+        //type 1 normal slash: 584 577
         for (int i = 0; i < beats.Length; i++)
         {
             beats[i].behaviour = Random.Range(0, 2);
@@ -152,7 +149,7 @@ public class NormalEnemysController : MonoBehaviour
                     beats[i].timing = upBeats[i].timeInSong;
                     break;
                 case 1:
-                    beats[i].timing = upBeats[i].timeInSong + 0.224f;
+                    beats[i].timing = upBeats[i].timeInSong + 0.227f;
                     break;
             }
 
@@ -176,7 +173,7 @@ public class NormalEnemysController : MonoBehaviour
                     beats[i].timing = timing[i];
                     break;
                 case 1:
-                    beats[i].timing = timing[i] + 0.551f;
+                    beats[i].timing = timing[i] + 0.227f;
                     break;
             }
         }
@@ -241,9 +238,7 @@ public class NormalEnemysController : MonoBehaviour
 
             if (UserPref.HP == 0)
             {
-#if UNITY_EDITOR
                 saveUserPerformance();
-#endif
                 SceneManager.LoadScene("GameOver");
             }
             
@@ -266,7 +261,24 @@ public class NormalEnemysController : MonoBehaviour
 
         Debug.Log("score: " + UserPref.SCORE);
         score.text = "Score: " + UserPref.SCORE;
-        combo.text = UserPref.COMBO + "\nCOMBO";
+        string addition = "";
+        combo.color = Color.white;
+        if (performance == 1)
+        {
+            addition = "NORMAL";
+            combo.color = Color.cyan;
+        }
+        else if (performance == 2)
+        {
+            addition = "GOOD";
+            combo.color = Color.green;
+        }
+        else if (performance == 3)
+        {
+            combo.color = Color.yellow;
+            addition = "PERFECT";
+        }
+        combo.text = UserPref.COMBO + "\nCOMBO\n" + addition;
     }
 
     public void saveUserPerformance() {
