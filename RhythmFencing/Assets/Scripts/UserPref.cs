@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public static class UserPref
 {
     public static float HP = 100;
@@ -25,4 +27,5 @@ public static class UserPref
     public static float TOLERANCE = 0.5f;
     public static int MAX_COMBO = 0;
     public static bool LOADED = false;
+    public static AudioClip[] audioClips;
 }
