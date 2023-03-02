@@ -114,9 +114,14 @@ public static class BeatDetectionModel {
     }
 
     public static void writeResult(AudioSource currentAudio, List<Point> currentSong) {
-        string path = "Assets/Result/Debug.txt";
-        StreamWriter sw = new StreamWriter(path, false);
+        string path = "/sdcard/Download/BeatDetetctionModelResult.txt";
 
+#if UNITY_EDITOR
+        path = "Assets/Result/Debug.txt";
+
+#endif
+        StreamWriter sw = new StreamWriter(path, true);
+        sw.WriteLine(string.Format("\tSong Name = {0}", currentAudio.clip.name));
         sw.WriteLine(string.Format("\tsamples = {0}", currentAudio.clip.samples));
         sw.WriteLine(string.Format("\tchannels = {0}", currentAudio.clip.channels));
         sw.WriteLine(string.Format("\ttotalsamples = {0}", currentAudio.clip.samples * currentAudio.clip.channels));

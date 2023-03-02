@@ -196,6 +196,8 @@ public class TestController : MonoBehaviour
         path = "Assets/Result/UserBeatDetection.txt";
 #endif
         StreamWriter sw = new StreamWriter(path, true);
+
+        sw.WriteLine("Song: " + UserPref.SONG_FILEPATH);
         foreach (float f in record) {
             sw.WriteLine(f);
         }

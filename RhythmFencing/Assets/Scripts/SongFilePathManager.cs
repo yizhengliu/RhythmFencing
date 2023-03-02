@@ -19,6 +19,7 @@ public class SongFilePathManager : MonoBehaviour
     }
 
     private void addOptions(Dropdown dropdown) {
+        
         Debug.Log(Application.persistentDataPath);
         string audioPath;
         audioPath = "/sdcard/Music";
@@ -31,6 +32,8 @@ public class SongFilePathManager : MonoBehaviour
                 .GetFiles(audioPath, "*.*")
                 .Where(file => allowedFileTypes.Any(file.ToLower().EndsWith))
                 .ToList();
+        if(filteredAudioFilePaths == null || filteredAudioFilePaths.Count == 0)
+            return;
         foreach (string s in filteredAudioFilePaths)
         {
             fileNames.Add(s.Replace(audioPath + "\\", ""));
@@ -48,6 +51,8 @@ public class SongFilePathManager : MonoBehaviour
                 .GetFiles(audioPath, "*.*")
                 .Where(file => allowedFileTypes.Any(file.ToLower().EndsWith))
                 .ToList();
+        if (filteredAudioFilePaths == null || filteredAudioFilePaths.Count == 0)
+            return;
         foreach (string s in filteredAudioFilePaths)
         {
             fileNames.Add(s.Replace(audioPath + "/", ""));
@@ -58,6 +63,12 @@ public class SongFilePathManager : MonoBehaviour
         {
             Debug.Log(s);
         }
+        int defaultOption = 0;
+        if (UserPref.SONG_FILEPATH != null)
+            for (int i = 0; i < filteredAudioFilePaths.Count; i++)
+                if (filteredAudioFilePaths[i] == UserPref.SONG_FILEPATH)
+                    defaultOption = i;
+        songFileNameDropDown.value = defaultOption;
         UserPref.SONG_FILEPATH = filteredAudioFilePaths[dropdown.value];
     }
 

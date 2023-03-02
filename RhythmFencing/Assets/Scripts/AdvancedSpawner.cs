@@ -136,7 +136,7 @@ public class AdvancedSpawner : MonoBehaviour
                     currentAudio.Play();
             }
             spawn();
-            if (counter == beats.Length && !currentAudio.isPlaying)
+            if (counter == beats.Length && !currentAudio.isPlaying && timer > 4.535f + currentAudio.clip.length + 3f)
             {
                 saveUserPerformance();
                 SceneManager.LoadScene("GameOver");
@@ -272,7 +272,10 @@ public class AdvancedSpawner : MonoBehaviour
             np.angle = -1;
             np.category = performance;
             userPerformances.Add(np);
-
+            if (performance == 0)
+                UserPref.MISSED++;
+            else if (performance == -1)
+                UserPref.PUNISHED++;
             if (UserPref.HP == 0)
             {
                 saveUserPerformance();
@@ -304,16 +307,19 @@ public class AdvancedSpawner : MonoBehaviour
         combo.color = Color.white;
         if (performance == 1)
         {
+            UserPref.NORMAL++;
             addition = "NORMAL";
             combo.color = Color.cyan;
         }
         else if (performance == 2)
         {
+            UserPref.GOOD++;
             addition = "GOOD";
             combo.color = Color.green;
         }
         else if (performance == 3)
         {
+            UserPref.PERFECT++;
             combo.color = Color.yellow;
             addition = "PERFECT";
         }
@@ -327,6 +333,7 @@ public class AdvancedSpawner : MonoBehaviour
 #endif
         
         StreamWriter sw = new StreamWriter(path, true);
+        sw.WriteLine(string.Format("\tSongName = {0}", currentAudio.clip.name));
         sw.WriteLine(string.Format("\tMaxCombos = {0}", UserPref.MAX_COMBO));
         sw.WriteLine(string.Format("\tScore = {0}", UserPref.SCORE));
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
