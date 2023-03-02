@@ -44,6 +44,11 @@ public class SongFilePathManager : MonoBehaviour
         {
             Debug.Log(s);
         }
+        int defaultOption = 0;
+        if (UserPref.SONG_FILEPATH != null)
+            for (int i = 0; i < filteredAudioFilePaths.Count; i++)
+                if (filteredAudioFilePaths[i] == UserPref.SONG_FILEPATH)
+                    defaultOption = i;
         UserPref.SONG_FILEPATH = filteredAudioFilePaths[dropdown.value];
         return;
 #endif
