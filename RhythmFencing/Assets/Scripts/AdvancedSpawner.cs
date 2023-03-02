@@ -3,9 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -46,7 +44,6 @@ public class AdvancedSpawner : MonoBehaviour
     }
     private List<Performance> userPerformances = new List<Performance>();
     private AudioClip clip = null;
-    private UnityWebRequest uwr;
     private float[] spawnerCooldowns = new float[] { 1.2f,1.2f,1.2f,1.2f};
     private bool[] willFlash;
     private void Awake(){
@@ -55,47 +52,9 @@ public class AdvancedSpawner : MonoBehaviour
         //importer.Loaded += OnLoaded;
         //importer.Import(UserPref.SONG_FILEPATH);
         destination = playerPos;
+        clip = UserPref.CLIP_SELECTED;
     }
 
-    private async void Start()
-    {
-        clip = await LoadClip();
-    }
-
-    async Task<AudioClip> LoadClip()
-    {
-        AudioClip clip = null;
-        string[] allowedFileTypes = new string[] { ".mp3", ".ogg", ".wav", ".aiff", ".aif" };
-        //file.ToLower().EndsWith
-        if (UserPref.SONG_FILEPATH.ToLower().EndsWith(allowedFileTypes[0]))
-            uwr = UnityWebRequestMultimedia.GetAudioClip(UserPref.SONG_FILEPATH, AudioType.MPEG);
-        else if (UserPref.SONG_FILEPATH.ToLower().EndsWith(allowedFileTypes[1]))
-            uwr = UnityWebRequestMultimedia.GetAudioClip(UserPref.SONG_FILEPATH, AudioType.OGGVORBIS);
-        else if (UserPref.SONG_FILEPATH.ToLower().EndsWith(allowedFileTypes[2]))
-            uwr = UnityWebRequestMultimedia.GetAudioClip(UserPref.SONG_FILEPATH, AudioType.WAV);
-        else if (UserPref.SONG_FILEPATH.ToLower().EndsWith(allowedFileTypes[3]) || UserPref.SONG_FILEPATH.ToLower().EndsWith(allowedFileTypes[4]))
-            uwr = UnityWebRequestMultimedia.GetAudioClip(UserPref.SONG_FILEPATH, AudioType.AIFF);
-
-        uwr.SendWebRequest();
-
-        // wrap tasks in try/catch, otherwise it'll fail silently
-        try
-        {
-            while (!uwr.isDone) await Task.Delay(0);
-
-            if (uwr.isNetworkError || uwr.isHttpError) Debug.Log($"{uwr.error}");
-            else
-            {
-                clip = DownloadHandlerAudioClip.GetContent(uwr);
-            }
-        }
-        catch (Exception err)
-        {
-            Debug.Log($"{err.Message}, {err.StackTrace}");
-        }
-
-        return clip;
-    }
     private void FixedUpdate()
     {
         if (lightIndicator.enabled)
@@ -108,10 +67,7 @@ public class AdvancedSpawner : MonoBehaviour
             }
         }
         HPBar.fillAmount = UserPref.HP / 100f;
-        if (clip == null)
-        {
-            loadingProgress.text = "Loading..." + (Mathf.Round(uwr.downloadProgress * 1000) / 10) + "%";
-        }
+        
         if (!loaded && clip != null)
         {
             currentAudio.clip = clip;
@@ -136,7 +92,7 @@ public class AdvancedSpawner : MonoBehaviour
                     currentAudio.Play();
             }
             spawn();
-            if (counter == beats.Length && !currentAudio.isPlaying)
+            if (counter == beats.Length && !currentAudio.isPlaying && timer > 4.535f + currentAudio.clip.length + 3f)
             {
                 saveUserPerformance();
                 SceneManager.LoadScene("GameOver");
@@ -272,13 +228,16 @@ public class AdvancedSpawner : MonoBehaviour
             np.angle = -1;
             np.category = performance;
             userPerformances.Add(np);
-
+            if (performance == 0)
+                UserPref.MISSED++;
+            else if (performance == -1)
+                UserPref.PUNISHED++;
             if (UserPref.HP == 0)
             {
                 saveUserPerformance();
                 SceneManager.LoadScene("GameOver");
             }
-
+            
         }
         else
         {
@@ -304,16 +263,19 @@ public class AdvancedSpawner : MonoBehaviour
         combo.color = Color.white;
         if (performance == 1)
         {
+            UserPref.NORMAL++;
             addition = "NORMAL";
             combo.color = Color.cyan;
         }
         else if (performance == 2)
         {
+            UserPref.GOOD++;
             addition = "GOOD";
             combo.color = Color.green;
         }
         else if (performance == 3)
         {
+            UserPref.PERFECT++;
             combo.color = Color.yellow;
             addition = "PERFECT";
         }
@@ -327,6 +289,7 @@ public class AdvancedSpawner : MonoBehaviour
 #endif
         
         StreamWriter sw = new StreamWriter(path, true);
+        sw.WriteLine(string.Format("\tSongName = {0}", UserPref.CLIP_SELECTED.name));
         sw.WriteLine(string.Format("\tMaxCombos = {0}", UserPref.MAX_COMBO));
         sw.WriteLine(string.Format("\tScore = {0}", UserPref.SCORE));
         System.Text.StringBuilder sb = new System.Text.StringBuilder();

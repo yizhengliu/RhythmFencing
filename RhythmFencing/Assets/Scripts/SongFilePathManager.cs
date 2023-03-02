@@ -7,62 +7,32 @@ using UnityEngine.UI;
 
 public class SongFilePathManager : MonoBehaviour
 {
+    public AudioClip[] audioClips;
     private Dropdown songFileNameDropDown;
-    private List<string> filteredAudioFilePaths;
     // Start is called before the first frame update
     void Start(){
         songFileNameDropDown = GetComponent<Dropdown>();
-        addOptions(songFileNameDropDown);
+        addOptions();
         songFileNameDropDown.onValueChanged.AddListener(delegate {
-                onValueChanged(songFileNameDropDown);
+                onValueChanged();
             });
     }
 
-    private void addOptions(Dropdown dropdown) {
-        Debug.Log(Application.persistentDataPath);
-        string audioPath;
-        audioPath = "/sdcard/Music";
-        string[] allowedFileTypes = new string[] { ".mp3", ".ogg", ".wav", ".aiff", ".aif" };
-        List<string> fileNames = new List<string>();
-#if UNITY_EDITOR
-        audioPath = System.Environment.GetFolderPath(
-        System.Environment.SpecialFolder.MyMusic);
-        filteredAudioFilePaths = Directory
-                .GetFiles(audioPath, "*.*")
-                .Where(file => allowedFileTypes.Any(file.ToLower().EndsWith))
-                .ToList();
-        foreach (string s in filteredAudioFilePaths)
-        {
-            fileNames.Add(s.Replace(audioPath + "\\", ""));
-        }
-        songFileNameDropDown.AddOptions(fileNames);
-        Debug.Log(filteredAudioFilePaths.Count);
-        foreach (string s in filteredAudioFilePaths)
-        {
-            Debug.Log(s);
-        }
-        UserPref.SONG_FILEPATH = filteredAudioFilePaths[dropdown.value];
-        return;
-#endif
-        filteredAudioFilePaths = Directory
-                .GetFiles(audioPath, "*.*")
-                .Where(file => allowedFileTypes.Any(file.ToLower().EndsWith))
-                .ToList();
-        foreach (string s in filteredAudioFilePaths)
-        {
-            fileNames.Add(s.Replace(audioPath + "/", ""));
-        }
-        songFileNameDropDown.AddOptions(fileNames);
-        Debug.Log(filteredAudioFilePaths.Count);
-        foreach (string s in filteredAudioFilePaths)
-        {
-            Debug.Log(s);
-        }
-        UserPref.SONG_FILEPATH = filteredAudioFilePaths[dropdown.value];
+    private void addOptions() {
+        if(audioClips.Length == 0)
+            return;
+        songFileNameDropDown.AddOptions(audioClips.Select(clip => clip.name).ToList());
+        int defaultOption = 0;
+        if (UserPref.CLIP_SELECTED != null)
+            for (int i = 0; i < audioClips.Length; i++)
+                if (audioClips[i].name == UserPref.CLIP_SELECTED.name)
+                    defaultOption = i;
+        songFileNameDropDown.value = defaultOption;
+        UserPref.CLIP_SELECTED = audioClips[songFileNameDropDown.value];
     }
 
-    private void onValueChanged(Dropdown dropdown){
-        UserPref.SONG_FILEPATH = filteredAudioFilePaths[dropdown.value];
-        Debug.Log("You have selected song: " + UserPref.SONG_FILEPATH);
+    private void onValueChanged(){
+        UserPref.CLIP_SELECTED = audioClips[songFileNameDropDown.value];
+        Debug.Log("You have selected song: " + audioClips[songFileNameDropDown.value]);
     }
 }

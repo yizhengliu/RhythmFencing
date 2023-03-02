@@ -7,13 +7,13 @@ using UnityEngine.SceneManagement;
 public class MenuController : MonoBehaviour
 {
     public void OnclickClassic() {
-        if (UserPref.SONG_FILEPATH != null)
+        if (UserPref.CLIP_SELECTED != null)
             SceneManager.LoadScene("GameSceneClassic");
         Debug.Log(Application.persistentDataPath);
     }
 
     public void OnclickNormal(){
-        if (UserPref.SONG_FILEPATH != null)
+        if (UserPref.CLIP_SELECTED != null)
             SceneManager.LoadScene("GameSceneNormal");
         Debug.Log(Application.persistentDataPath);
     }
@@ -21,7 +21,7 @@ public class MenuController : MonoBehaviour
     public void OnclickTest()
     {
         // /storage/emulated/0/Android/data/com.DefaultCompany.RhythmFencing/files
-        if (UserPref.SONG_FILEPATH != null)
+        if (UserPref.CLIP_SELECTED != null)
             SceneManager.LoadScene("Test");
     }
 }

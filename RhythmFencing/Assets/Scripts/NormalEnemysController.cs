@@ -6,8 +6,6 @@ using System;
 using Random = UnityEngine.Random;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using System.Threading.Tasks;
-using UnityEngine.Networking;
 
 public class NormalEnemysController : MonoBehaviour
 {
@@ -36,7 +34,6 @@ public class NormalEnemysController : MonoBehaviour
     }
     private List<Performance> userPerformances = new List<Performance>();
     private AudioClip clip = null;
-    private UnityWebRequest uwr;
     private void Awake() {
         currentAudio = GetComponent<AudioSource>();
 
@@ -44,7 +41,7 @@ public class NormalEnemysController : MonoBehaviour
         difficultySetting();
         //importer.Loaded += OnLoaded;
         //importer.Import(UserPref.SONG_FILEPATH);
-
+        clip = UserPref.CLIP_SELECTED;
         //delete enemies that are not belongs to this level
         for (int i = UserPref.DIFFICULTY_LEVEL + 1; i < enemies.Length; i++) {
             Destroy(enemies[i]);
@@ -59,53 +56,12 @@ public class NormalEnemysController : MonoBehaviour
         }
         UserPref.ENEMIES = es;
     }
-    private async void Start()
-    {
-        clip = await LoadClip();
-        //StartCoroutine("loadAudioClip");
-    }
-    async Task<AudioClip> LoadClip()
-    {
-        AudioClip clip = null;
-        string[] allowedFileTypes = new string[] { ".mp3", ".ogg", ".wav", ".aiff", ".aif" };
-        //file.ToLower().EndsWith
-        if (UserPref.SONG_FILEPATH.ToLower().EndsWith(allowedFileTypes[0]))
-            uwr = UnityWebRequestMultimedia.GetAudioClip(UserPref.SONG_FILEPATH, AudioType.MPEG);
-        else if(UserPref.SONG_FILEPATH.ToLower().EndsWith(allowedFileTypes[1]))
-            uwr = UnityWebRequestMultimedia.GetAudioClip(UserPref.SONG_FILEPATH, AudioType.OGGVORBIS);
-        else if (UserPref.SONG_FILEPATH.ToLower().EndsWith(allowedFileTypes[2]))
-            uwr = UnityWebRequestMultimedia.GetAudioClip(UserPref.SONG_FILEPATH, AudioType.WAV);
-        else if (UserPref.SONG_FILEPATH.ToLower().EndsWith(allowedFileTypes[3]) || UserPref.SONG_FILEPATH.ToLower().EndsWith(allowedFileTypes[4]))
-            uwr = UnityWebRequestMultimedia.GetAudioClip(UserPref.SONG_FILEPATH, AudioType.AIFF);
-        
-            uwr.SendWebRequest();
-
-            // wrap tasks in try/catch, otherwise it'll fail silently
-            try
-            {
-                while(!uwr.isDone) await Task.Delay(0);
-
-                if (uwr.isNetworkError || uwr.isHttpError) Debug.Log($"{uwr.error}");
-                else
-                {
-                    clip = DownloadHandlerAudioClip.GetContent(uwr);
-                }
-            }
-            catch (Exception err)
-            {
-                Debug.Log($"{err.Message}, {err.StackTrace}");
-            }
-
-        return clip;
-    }
-
+    
     
     private void FixedUpdate() {
         HPBar.fillAmount = UserPref.HP / 100f;
 
-        if (clip == null){
-            loadingProgress.text = "Loading..." + (Mathf.Round(uwr.downloadProgress * 1000) / 10) + "%";
-        }
+        
         if (clip != null && !loaded) {
             currentAudio.clip = clip;
             Destroy(loadingCanvas);
@@ -119,15 +75,13 @@ public class NormalEnemysController : MonoBehaviour
             //setupManually();
         }
         if (loaded) {
-            UserPref.LOADED = true;
             timer += Time.deltaTime;
             if (!currentAudio.isPlaying)
                 //time
                 if (timer > 0.804f && timer < 30f)
                     currentAudio.Play();
             SendMessages();
-            if (counter == beats.Length && !currentAudio.isPlaying) {
-                UserPref.LOADED = false;
+            if (counter == beats.Length && !currentAudio.isPlaying && timer > 0.804f + currentAudio.clip.length + 3f) {
                 saveUserPerformance();
                 SceneManager.LoadScene("GameOver");
             }
@@ -235,7 +189,10 @@ public class NormalEnemysController : MonoBehaviour
             np.angle = -1;
             np.category = performance;
             userPerformances.Add(np);
-
+            if (performance == 0)
+                UserPref.MISSED++;
+            else if (performance == -1)
+                UserPref.PUNISHED++;
             if (UserPref.HP == 0)
             {
                 saveUserPerformance();
@@ -265,16 +222,19 @@ public class NormalEnemysController : MonoBehaviour
         combo.color = Color.white;
         if (performance == 1)
         {
+            UserPref.NORMAL++;
             addition = "NORMAL";
             combo.color = Color.cyan;
         }
         else if (performance == 2)
         {
+            UserPref.GOOD++;
             addition = "GOOD";
             combo.color = Color.green;
         }
         else if (performance == 3)
         {
+            UserPref.PERFECT++;
             combo.color = Color.yellow;
             addition = "PERFECT";
         }
@@ -288,6 +248,8 @@ public class NormalEnemysController : MonoBehaviour
 #endif
 
         StreamWriter sw = new StreamWriter(path, true);
+
+        sw.WriteLine(string.Format("\tSongName = {0}", UserPref.CLIP_SELECTED.name));
         sw.WriteLine(string.Format("\tMaxCombos = {0}", UserPref.MAX_COMBO));
         sw.WriteLine(string.Format("\tScore = {0}", UserPref.SCORE));
         System.Text.StringBuilder sb = new System.Text.StringBuilder();

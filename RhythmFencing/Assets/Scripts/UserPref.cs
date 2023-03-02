@@ -3,14 +3,12 @@ using UnityEngine;
 public static class UserPref
 {
     public static float HP = 100;
-    //false is normal, true is classic
-    public static bool GAME_MODE = false;
-    public static int DIFFICULTY_LEVEL = 2;
+    public static int DIFFICULTY_LEVEL = 0;
 
-    public static string SONG_FILEPATH = "C:\\Users\\edbod\\Music\\September - Cry For You (UK Radio Edit).mp3";
+    //public static string SONG_FILEPATH = "C:\\Users\\edbod\\Music\\September - Cry For You (UK Radio Edit).mp3";
     //public static string SONG_FILEPATH = "C:\\Users\\27571\\Music\\September - Cry For You (UK Radio Edit).mp3";
     //public static string SONG_FILEPATH = null;
-    public static int SCORE = 0;
+    public static long SCORE = 0;
     public static int COMBO = 0;
     public static Enemy[] ENEMIES;
     public class Enemy {
@@ -26,6 +24,10 @@ public static class UserPref
     //how simple will the line after analysis
     public static float TOLERANCE = 0.5f;
     public static int MAX_COMBO = 0;
-    public static bool LOADED = false;
-    public static AudioClip[] audioClips;
+    public static AudioClip CLIP_SELECTED = null;
+    public static int MISSED = 0;
+    public static int NORMAL = 0;
+    public static int GOOD = 0;
+    public static int PERFECT = 0;
+    public static int PUNISHED = 0;
 }
