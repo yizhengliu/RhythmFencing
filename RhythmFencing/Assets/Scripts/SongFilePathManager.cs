@@ -19,11 +19,13 @@ public class SongFilePathManager : MonoBehaviour
     }
 
     private void addOptions(Dropdown dropdown) {
+        
         Debug.Log(Application.persistentDataPath);
         string audioPath;
         audioPath = "/sdcard/Music";
         string[] allowedFileTypes = new string[] { ".mp3", ".ogg", ".wav", ".aiff", ".aif" };
         List<string> fileNames = new List<string>();
+        int defaultOption = 0;
 #if UNITY_EDITOR
         audioPath = System.Environment.GetFolderPath(
         System.Environment.SpecialFolder.MyMusic);
@@ -31,6 +33,8 @@ public class SongFilePathManager : MonoBehaviour
                 .GetFiles(audioPath, "*.*")
                 .Where(file => allowedFileTypes.Any(file.ToLower().EndsWith))
                 .ToList();
+        if(filteredAudioFilePaths == null || filteredAudioFilePaths.Count == 0)
+            return;
         foreach (string s in filteredAudioFilePaths)
         {
             fileNames.Add(s.Replace(audioPath + "\\", ""));
@@ -40,7 +44,11 @@ public class SongFilePathManager : MonoBehaviour
         foreach (string s in filteredAudioFilePaths)
         {
             Debug.Log(s);
-        }
+        };
+        if (UserPref.SONG_FILEPATH != null)
+            for (int i = 0; i < filteredAudioFilePaths.Count; i++)
+                if (filteredAudioFilePaths[i] == UserPref.SONG_FILEPATH)
+                    defaultOption = i;
         UserPref.SONG_FILEPATH = filteredAudioFilePaths[dropdown.value];
         return;
 #endif
@@ -48,6 +56,8 @@ public class SongFilePathManager : MonoBehaviour
                 .GetFiles(audioPath, "*.*")
                 .Where(file => allowedFileTypes.Any(file.ToLower().EndsWith))
                 .ToList();
+        if (filteredAudioFilePaths == null || filteredAudioFilePaths.Count == 0)
+            return;
         foreach (string s in filteredAudioFilePaths)
         {
             fileNames.Add(s.Replace(audioPath + "/", ""));
@@ -58,6 +68,11 @@ public class SongFilePathManager : MonoBehaviour
         {
             Debug.Log(s);
         }
+        if (UserPref.SONG_FILEPATH != null)
+            for (int i = 0; i < filteredAudioFilePaths.Count; i++)
+                if (filteredAudioFilePaths[i] == UserPref.SONG_FILEPATH)
+                    defaultOption = i;
+        songFileNameDropDown.value = defaultOption;
         UserPref.SONG_FILEPATH = filteredAudioFilePaths[dropdown.value];
     }
 
