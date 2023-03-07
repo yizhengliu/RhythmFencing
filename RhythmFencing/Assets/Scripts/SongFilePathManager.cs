@@ -25,6 +25,7 @@ public class SongFilePathManager : MonoBehaviour
         audioPath = "/sdcard/Music";
         string[] allowedFileTypes = new string[] { ".mp3", ".ogg", ".wav", ".aiff", ".aif" };
         List<string> fileNames = new List<string>();
+        int defaultOption = 0;
 #if UNITY_EDITOR
         audioPath = System.Environment.GetFolderPath(
         System.Environment.SpecialFolder.MyMusic);
@@ -43,8 +44,7 @@ public class SongFilePathManager : MonoBehaviour
         foreach (string s in filteredAudioFilePaths)
         {
             Debug.Log(s);
-        }
-        int defaultOption = 0;
+        };
         if (UserPref.SONG_FILEPATH != null)
             for (int i = 0; i < filteredAudioFilePaths.Count; i++)
                 if (filteredAudioFilePaths[i] == UserPref.SONG_FILEPATH)
@@ -68,7 +68,6 @@ public class SongFilePathManager : MonoBehaviour
         {
             Debug.Log(s);
         }
-        int defaultOption = 0;
         if (UserPref.SONG_FILEPATH != null)
             for (int i = 0; i < filteredAudioFilePaths.Count; i++)
                 if (filteredAudioFilePaths[i] == UserPref.SONG_FILEPATH)
