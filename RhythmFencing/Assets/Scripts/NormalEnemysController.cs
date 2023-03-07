@@ -59,7 +59,7 @@ public class NormalEnemysController : MonoBehaviour
     
     
     private void FixedUpdate() {
-        HPBar.fillAmount = UserPref.HP / 100f;
+        
 
         
         if (clip != null && !loaded) {
@@ -182,6 +182,7 @@ public class NormalEnemysController : MonoBehaviour
             else
                 UserPref.SCORE = 0;
             UserPref.HP -= 10;
+            HPBar.fillAmount = UserPref.HP / 100f;
 
             Performance np = new Performance();
             np.index = index;

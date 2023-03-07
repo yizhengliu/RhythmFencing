@@ -66,7 +66,6 @@ public class AdvancedSpawner : MonoBehaviour
                 lightIndicator.enabled = false;
             }
         }
-        HPBar.fillAmount = UserPref.HP / 100f;
         
         if (!loaded && clip != null)
         {
@@ -221,6 +220,7 @@ public class AdvancedSpawner : MonoBehaviour
             else
                 UserPref.SCORE = 0;
             UserPref.HP -= 10;
+            HPBar.fillAmount = UserPref.HP / 100f;
 
             Performance np = new Performance();
             np.index = index;
