@@ -121,7 +121,7 @@ public static class BeatDetectionModel {
 
 #endif
         StreamWriter sw = new StreamWriter(path, true);
-        sw.WriteLine(string.Format("\tSong Name = {0}", currentAudio.clip.name));
+        sw.WriteLine(string.Format("\tSong Name = {0}", UserPref.SONG_FILEPATH));
         sw.WriteLine(string.Format("\tsamples = {0}", currentAudio.clip.samples));
         sw.WriteLine(string.Format("\tchannels = {0}", currentAudio.clip.channels));
         sw.WriteLine(string.Format("\ttotalsamples = {0}", currentAudio.clip.samples * currentAudio.clip.channels));

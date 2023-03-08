@@ -122,6 +122,7 @@ public class AdvancedSpawner : MonoBehaviour
             BeatDetectionModel.writeResult(currentAudio, currentSong);
             addToBeats();
             loaded = true;
+            GC.Collect();
             //or using mannually set up 
             //setupManually();
         }
@@ -333,7 +334,7 @@ public class AdvancedSpawner : MonoBehaviour
 #endif
         
         StreamWriter sw = new StreamWriter(path, true);
-        sw.WriteLine(string.Format("\tSongName = {0}", currentAudio.clip.name));
+        sw.WriteLine(string.Format("\tSongName = {0}", UserPref.SONG_FILEPATH));
         sw.WriteLine(string.Format("\tMaxCombos = {0}", UserPref.MAX_COMBO));
         sw.WriteLine(string.Format("\tScore = {0}", UserPref.SCORE));
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
