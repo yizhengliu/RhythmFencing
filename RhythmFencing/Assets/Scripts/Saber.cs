@@ -24,9 +24,10 @@ public class Saber : MonoBehaviour
             }
         }
     }
+    /*
     private void OnTriggerEnter(Collider collision)
     {
-        print("on trigger");
+        //print("on trigger");
         int performance = 0;
         if (collision.gameObject.layer == LayerMask.NameToLayer("Sword"))
         {
@@ -53,9 +54,10 @@ public class Saber : MonoBehaviour
         if (other.gameObject.layer == LayerMask.NameToLayer("Body"))
             entered = false;
     }
+    */
     private void OnCollisionEnter(Collision collision)
     {
-        print("on collision" + collision.gameObject.layer.ToString());
+        //print("on collision" + collision.gameObject.layer.ToString());
         //the first point of collision
         Vector3 collisionEnterPoint = collision.contacts[0].point;
         //for effect

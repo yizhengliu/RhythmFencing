@@ -13,11 +13,11 @@ public class DifficultyController : MonoBehaviour
             onValueChanged(difficultyDropDown);
         });
         difficultyDropDown.value = UserPref.DIFFICULTY_LEVEL;
-        Debug.Log("You have selected difficulty: " + UserPref.DIFFICULTY_LEVEL);
+        //Debug.Log("You have selected difficulty: " + UserPref.DIFFICULTY_LEVEL);
     }
 
     private void onValueChanged(TMPro.TMP_Dropdown dropdown) {
         UserPref.DIFFICULTY_LEVEL = dropdown.value;
-        Debug.Log("You have selected difficulty: " + UserPref.DIFFICULTY_LEVEL);
+        //Debug.Log("You have selected difficulty: " + UserPref.DIFFICULTY_LEVEL);
     }
 }

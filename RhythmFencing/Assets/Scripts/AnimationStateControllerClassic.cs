@@ -75,11 +75,13 @@ public class AnimationStateControllerClassic : MonoBehaviour
         controller.SendMessage("Hit", new double[] { 0, counter });
         Destroy(this.gameObject);
     }
+    /*
     public void actionPerformed(int animationType) {
         string at_ = behaviour == 0 ? "Another Slash" : "Normal Slash";
         long result = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond - startTime;
         Debug.Log("" + result + ", type : " + at_ + ", spawner : " + spawner);
     }
+    */
     public void setController(GameObject controller) {
         this.controller = controller;
     }
@@ -119,7 +121,7 @@ public class AnimationStateControllerClassic : MonoBehaviour
                 controller.SendMessage("playHitEffect", behaviour);
                 vibration(75, 2, 255, performance[2] == 0 ? true : false);
                 spawnEffect();
-                print("from saber");
+                //print("from saber");
                 controller.SendMessage("Hit", new double[] { performance[0], counter, performance[1] });
                 Destroy(this.gameObject);
             }

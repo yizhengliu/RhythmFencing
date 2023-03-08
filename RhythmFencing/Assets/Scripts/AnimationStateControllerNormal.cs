@@ -24,7 +24,6 @@ public class AnimationStateControllerNormal : MonoBehaviour
     private Vector3 collisionPos;
     private float indicatorTimer = 0;
     private int indicatorCount = 0;
-    private bool firstUpdate = true;
     //fix rotation problem, and transformation
     private bool beenHitted = false;
 
@@ -37,17 +36,10 @@ public class AnimationStateControllerNormal : MonoBehaviour
         transform.position = stationaryPoint;
         transform.rotation = stationaryRotation;
     }
-    private void Update()
+    private void Start()
     {
-        //print(index + "  "+ Vector3.Distance(transform.position, cam.position));
-        //record the initial position and rotation
-        if (firstUpdate) {
-            
-            stationaryRotation = transform.rotation;
-            stationaryPoint = transform.position;
-            firstUpdate = false;
-        }
-       
+        stationaryRotation = transform.rotation;
+        stationaryPoint = transform.position;
     }
     private void FixedUpdate()
     {
@@ -96,30 +88,31 @@ public class AnimationStateControllerNormal : MonoBehaviour
             !(animator.GetBool("NormalSlash") || animator.GetBool("AnotherSlash"))) {
             beenHitted = false;
             // it seems that the info is changed but the animation is not reset
-            Debug.Log("im available now");
+            //Debug.Log("im available now");
             UserPref.ENEMIES[index].isActive = false;
             index = -1;
             resetTransform();
         }
     }
 
+    /*
     public void actionPerformed(int animationType)
     {
         string at_ = animator.GetBool("NormalSlash") ? "Normal Slash" : "Another Slash";
         
         //print the time the action performed
         long result = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond - startTime;
-        Debug.Log("action performed: " + result + ", type : " + at_);
+        //Debug.Log("action performed: " + result + ", type : " + at_);
         //lightIndicator.enabled = true;
         
     }
-
+    */
     //
     public void startAction(int i)
     {
         if(started)
             return;
-        Debug.Log("Start Action"); 
+        //Debug.Log("Start Action"); 
         //reset before action
         resetTransform();
         startTime = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond;
@@ -152,6 +145,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
     }
     public void Hit(double[] performance)
     {
+        /*
         switch (performance[0]) { 
             case 0:
                 print("From Missed");
@@ -163,6 +157,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
                 print("From Saber");
                 break;
         }
+        */
         if (beenHitted)
             return;
         
@@ -180,19 +175,19 @@ public class AnimationStateControllerNormal : MonoBehaviour
                 source.PlayOneShot(clip[behaviour]);
                 vibration(75, 2, 255, performance[2] == 0 ? true : false);
                 spawnEffect();
-                print("Im hitted");
+                //print("Im hitted");
                 controller.SendMessage("Hit", new double[] { performance[0], counter, performance[1] });
             }
             else if (performance[0] == -1)
             {
                 source.PlayOneShot(clip[2]);
                 vibration(35, 2, 255, performance[1] == 0 ? true : false);
-                print("Body hitted");
+                //print("Body hitted");
                 controller.SendMessage("Hit", new double[] { -1, counter });
             }
             else
             {
-                print("Missed");
+                //print("Missed");
                 controller.SendMessage("Hit", new double[] { performance[0], counter });
             }
             //reset after action
@@ -203,7 +198,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
             {
                 source.PlayOneShot(clip[2]);
                 vibration(35, 2, 255, performance[1] == 0 ? true : false);
-                print("Body hitted");
+                //print("Body hitted");
                 controller.SendMessage("Hit", new double[] { -1, counter });
             }
         }

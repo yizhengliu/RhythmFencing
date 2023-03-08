@@ -77,6 +77,8 @@ public class AdvancedSpawner : MonoBehaviour
             BeatDetectionModel.writeResult(currentAudio, currentSong);
             addToBeats();
             loaded = true;
+            currentSong = null;
+            GC.Collect();
             //or using mannually set up 
             //setupManually();
         }
@@ -257,7 +259,7 @@ public class AdvancedSpawner : MonoBehaviour
             userPerformances.Add(np);
         }
 
-        Debug.Log("score: " + UserPref.SCORE);
+        //Debug.Log("score: " + UserPref.SCORE);
         score.text = "Score: " + UserPref.SCORE;
         string addition = "";
         combo.color = Color.white;

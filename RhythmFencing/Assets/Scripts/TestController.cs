@@ -23,7 +23,6 @@ public class TestController : MonoBehaviour
     private bool loaded = false;
     private float localTimer = 0;
     private float userTimer = 0;
-    private bool keyPressed = false;
     private float lastBeatTime = -1;
     private BeatDetectionModel.Point[] beats;
     private List<float> record = new List<float>();
@@ -65,16 +64,7 @@ public class TestController : MonoBehaviour
         clip = UserPref.CLIP_SELECTED;
     }
 
-    private void Update() {
-        if (Input.GetKeyDown(KeyCode.T) && loaded)
-            keyPressed = true;
-    }
-
     private void FixedUpdate() {
-        if (keyPressed) {
-            keyPressed = false;
-            onClickButton();
-        }
         if (!loaded && clip != null) {
             currentAudio.clip = clip;
             Destroy(loadingCanvas);
