@@ -65,6 +65,7 @@ public class NormalEnemysController : MonoBehaviour
         if (clip != null && !loaded) {
             currentAudio.clip = clip;
             Destroy(loadingCanvas);
+            
             currentSong = BeatDetectionModel.initializeLineOfTheAudio(currentAudio);
             BeatDetectionModel.simplifyLine(ref currentSong);
             BeatDetectionModel.findUpBeat(ref currentSong);
@@ -74,7 +75,7 @@ public class NormalEnemysController : MonoBehaviour
             currentSong = null;
             GC.Collect();
             //or using mannually set up 
-            //setupManually();
+            setupManually();
         }
         if (loaded) {
             timer += Time.deltaTime;
@@ -113,7 +114,7 @@ public class NormalEnemysController : MonoBehaviour
     }
 
     private void setupManually() {
-        TextAsset textAsset = Resources.Load("Labels 1") as TextAsset;
+        TextAsset textAsset = Resources.Load("Labels_1") as TextAsset;
 
         string[] textInfo = textAsset.text.Split('\n');
         float[] timing;
@@ -142,12 +143,18 @@ public class NormalEnemysController : MonoBehaviour
             List<int> possible = UserPref.ENEMIES.Where(e => e.isActive == false).Select(e => e.index).ToList();
 
             //if possible
-            //Debug.Log("Possible enemy: " + possible.Count);
+            string pe = "";
+            
+            for (int i = 0; i < possible.Count; i++) {
+                pe += possible[i];
+                pe += " ";
+            }
+            //Debug.Log("Possible enemy: " + pe);
             if (possible.Count > 0) {
                 int ran = Random.Range(0, possible.Count);
                 enemies[possible[ran]].SendMessage("setBehaviour", beats[counter].behaviour);
-                enemies[possible[ran]].SendMessage("startAction", possible[ran]);
                 enemies[possible[ran]].SendMessage("counterIndex", counter);
+                enemies[possible[ran]].SendMessage("startAction", possible[ran]);
                 UserPref.ENEMIES[possible[ran]].isActive = true;
             }
             counter++;

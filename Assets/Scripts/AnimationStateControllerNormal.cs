@@ -81,16 +81,17 @@ public class AnimationStateControllerNormal : MonoBehaviour
             }
         }
         //AnimatorStateInfo animationInfo = animator.GetCurrentAnimatorStateInfo(0);
-        
+        //if((!(animator.GetBool("NormalSlash") || animator.GetBool("AnotherSlash"))&& UserPref.ENEMIES[index].isActive)
         //set the action back to idle
         if (index != -1 &&
             //animationInfo.IsName("Sword And Shield Idle")
-            !(animator.GetBool("NormalSlash") || animator.GetBool("AnotherSlash"))) {
+            !(animator.GetBool("NormalSlash") || animator.GetBool("AnotherSlash") &&
+            UserPref.ENEMIES[index].isActive)) {
             beenHitted = false;
             // it seems that the info is changed but the animation is not reset
-            //Debug.Log("im available now");
+            //Debug.Log("im available now from " + index);
             UserPref.ENEMIES[index].isActive = false;
-            index = -1;
+            
             resetTransform();
         }
     }
@@ -112,12 +113,12 @@ public class AnimationStateControllerNormal : MonoBehaviour
     {
         if(started)
             return;
-        //Debug.Log("Start Action"); 
+        
         //reset before action
         resetTransform();
         startTime = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond;
         index = i;
-
+        //Debug.Log("Start Action from " + index);
         switch (behaviour)
         {
             case 0:
@@ -158,13 +159,20 @@ public class AnimationStateControllerNormal : MonoBehaviour
                 break;
         }
         */
+        if (performance[0] == -1)
+        {
+            source.PlayOneShot(clip[2]);
+            vibration(35, 2, 255, performance[1] == 0 ? true : false);
+            //print("Body hitted");
+            controller.SendMessage("Hit", new double[] { -1, counter });
+        }
         if (beenHitted)
             return;
         
         //AnimatorStateInfo animationInfo = animator.GetCurrentAnimatorStateInfo(0);
         if (animator.GetBool("NormalSlash") || animator.GetBool("AnotherSlash"))
         {
-
+            //race condition?
             animator.SetBool("AnotherSlash", false);
             animator.SetBool("NormalSlash", false);
             actionHelpers[0].SetActive(false);
@@ -177,30 +185,13 @@ public class AnimationStateControllerNormal : MonoBehaviour
                 spawnEffect();
                 //print("Im hitted");
                 controller.SendMessage("Hit", new double[] { performance[0], counter, performance[1] });
-            }
-            else if (performance[0] == -1)
-            {
-                source.PlayOneShot(clip[2]);
-                vibration(35, 2, 255, performance[1] == 0 ? true : false);
-                //print("Body hitted");
-                controller.SendMessage("Hit", new double[] { -1, counter });
-            }
-            else
+            } else
             {
                 //print("Missed");
                 controller.SendMessage("Hit", new double[] { performance[0], counter });
             }
             //reset after action
             resetTransform();
-        }
-        else {
-            if (performance[0] == -1)
-            {
-                source.PlayOneShot(clip[2]);
-                vibration(35, 2, 255, performance[1] == 0 ? true : false);
-                //print("Body hitted");
-                controller.SendMessage("Hit", new double[] { -1, counter });
-            }
         }
     }
 
