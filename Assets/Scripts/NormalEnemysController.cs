@@ -75,7 +75,7 @@ public class NormalEnemysController : MonoBehaviour
             currentSong = null;
             GC.Collect();
             //or using mannually set up 
-            setupManually();
+            //setupManually();
         }
         if (loaded) {
             timer += Time.deltaTime;
