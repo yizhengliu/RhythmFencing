@@ -6,8 +6,6 @@ using System;
 using Random = UnityEngine.Random;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using System.Threading.Tasks;
-using UnityEngine.Networking;
 
 public class NormalEnemysController : MonoBehaviour
 {
@@ -17,6 +15,7 @@ public class NormalEnemysController : MonoBehaviour
     public Canvas loadingCanvas;
     public Text loadingProgress;
     public GameObject[] enemies;
+    public AudioImporter importer;
 
     private struct Beat {
         public float timing;
@@ -35,15 +34,13 @@ public class NormalEnemysController : MonoBehaviour
         public int category;
     }
     private List<Performance> userPerformances = new List<Performance>();
-    private AudioClip clip = null;
-    private UnityWebRequest uwr;
     private void Awake() {
         currentAudio = GetComponent<AudioSource>();
 
         //difficulty setting
         difficultySetting();
-        //importer.Loaded += OnLoaded;
-        //importer.Import(UserPref.SONG_FILEPATH);
+        importer.Loaded += OnLoaded;
+        importer.Import(UserPref.SONG_FILEPATH);
 
         //delete enemies that are not belongs to this level
         for (int i = UserPref.DIFFICULTY_LEVEL + 1; i < enemies.Length; i++) {
@@ -59,55 +56,15 @@ public class NormalEnemysController : MonoBehaviour
         }
         UserPref.ENEMIES = es;
     }
-    private async void Start()
-    {
-        clip = await LoadClip();
-        //StartCoroutine("loadAudioClip");
-    }
-    async Task<AudioClip> LoadClip()
-    {
-        AudioClip clip = null;
-        string[] allowedFileTypes = new string[] { ".mp3", ".ogg", ".wav", ".aiff", ".aif" };
-        //file.ToLower().EndsWith
-        if (UserPref.SONG_FILEPATH.ToLower().EndsWith(allowedFileTypes[0]))
-            uwr = UnityWebRequestMultimedia.GetAudioClip(UserPref.SONG_FILEPATH, AudioType.MPEG);
-        else if(UserPref.SONG_FILEPATH.ToLower().EndsWith(allowedFileTypes[1]))
-            uwr = UnityWebRequestMultimedia.GetAudioClip(UserPref.SONG_FILEPATH, AudioType.OGGVORBIS);
-        else if (UserPref.SONG_FILEPATH.ToLower().EndsWith(allowedFileTypes[2]))
-            uwr = UnityWebRequestMultimedia.GetAudioClip(UserPref.SONG_FILEPATH, AudioType.WAV);
-        else if (UserPref.SONG_FILEPATH.ToLower().EndsWith(allowedFileTypes[3]) || UserPref.SONG_FILEPATH.ToLower().EndsWith(allowedFileTypes[4]))
-            uwr = UnityWebRequestMultimedia.GetAudioClip(UserPref.SONG_FILEPATH, AudioType.AIFF);
-        
-            uwr.SendWebRequest();
 
-            // wrap tasks in try/catch, otherwise it'll fail silently
-            try
-            {
-                while(!uwr.isDone) await Task.Delay(0);
+    private void OnLoaded(AudioClip clip) { currentAudio.clip = clip; }
 
-                if (uwr.isNetworkError || uwr.isHttpError) Debug.Log($"{uwr.error}");
-                else
-                {
-                    clip = DownloadHandlerAudioClip.GetContent(uwr);
-                }
-            }
-            catch (Exception err)
-            {
-                Debug.Log($"{err.Message}, {err.StackTrace}");
-            }
-
-        return clip;
-    }
-
-    
     private void FixedUpdate() {
-        HPBar.fillAmount = UserPref.HP / 100f;
 
-        if (clip == null){
-            loadingProgress.text = "Loading..." + (Mathf.Round(uwr.downloadProgress * 1000) / 10) + "%";
+        if (!importer.isDone){
+            loadingProgress.text = "Loading..." + (Mathf.Round(importer.progress * 1000) / 10) + "%";
         }
-        if (clip != null && !loaded) {
-            currentAudio.clip = clip;
+        if (importer.isDone && !loaded) {
             Destroy(loadingCanvas);
             currentSong = BeatDetectionModel.initializeLineOfTheAudio(currentAudio);
             BeatDetectionModel.simplifyLine(ref currentSong);
@@ -123,7 +80,7 @@ public class NormalEnemysController : MonoBehaviour
             timer += Time.deltaTime;
             if (!currentAudio.isPlaying)
                 //time
-                if (timer > 0.804f && timer < 30f)
+                if (timer > 0.804f && timer < 3f)
                     currentAudio.Play();
             SendMessages();
             if (counter == beats.Length && !currentAudio.isPlaying && timer > 0.804f + currentAudio.clip.length + 3f) {
@@ -191,7 +148,6 @@ public class NormalEnemysController : MonoBehaviour
                 enemies[possible[ran]].SendMessage("setBehaviour", beats[counter].behaviour);
                 enemies[possible[ran]].SendMessage("startAction", possible[ran]);
                 enemies[possible[ran]].SendMessage("counterIndex", counter);
-                UserPref.ENEMIES[possible[ran]].isActive = true;
             }
             counter++;
         }
@@ -228,6 +184,7 @@ public class NormalEnemysController : MonoBehaviour
                 UserPref.SCORE = 0;
             UserPref.HP -= 10;
 
+            HPBar.fillAmount = UserPref.HP / 100f;
             Performance np = new Performance();
             np.index = index;
             np.delay = -1;

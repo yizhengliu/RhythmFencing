@@ -127,9 +127,10 @@ public class AnimationStateControllerClassic : MonoBehaviour
 
     private void vibration(int iteration, int frequency, int strength, bool isLeft)
     {
+        int temp = strength;
         OVRHapticsClip hapticsClip = new OVRHapticsClip();
         for (int i = 0; i < iteration; i++)
-            hapticsClip.WriteSample(i % frequency == 0 ? (byte)strength : (byte)0);
+            hapticsClip.WriteSample(i % frequency == 0 ? (byte)temp-- : (byte)0);
         if (isLeft)
             OVRHaptics.LeftChannel.Preempt(hapticsClip);
         else

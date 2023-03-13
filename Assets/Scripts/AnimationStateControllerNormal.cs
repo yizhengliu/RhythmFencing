@@ -23,11 +23,11 @@ public class AnimationStateControllerNormal : MonoBehaviour
 
     private Vector3 collisionPos;
     private float indicatorTimer = 0;
-    private int indicatorCount = 0;
+    private float indicatorCount = 0;
     private bool firstUpdate = true;
     //fix rotation problem, and transformation
     private bool beenHitted = false;
-
+    private bool reseted = true;
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -53,8 +53,8 @@ public class AnimationStateControllerNormal : MonoBehaviour
     {
         if (lightIndicator.enabled)
         {
-            indicatorCount++;
-            if (indicatorCount > 1)
+            indicatorCount += Time.deltaTime;
+            if (indicatorCount > 0.05f)
             {
                 indicatorCount = 0;
                 lightIndicator.enabled = false;
@@ -70,7 +70,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
             {
 
                 //another slash
-                if (indicatorTimer >= 0.804)
+                if (indicatorTimer >= 0.804f)
                 {
                     indicatorTimer = 0;
                     started = false;
@@ -80,7 +80,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
             else
             {
                 //normal slash
-                if (indicatorTimer >= 0.577)
+                if (indicatorTimer >= 0.577f)
                 {
                     indicatorTimer = 0;
                     started = false;
@@ -88,17 +88,20 @@ public class AnimationStateControllerNormal : MonoBehaviour
                 }
             }
         }
-        //AnimatorStateInfo animationInfo = animator.GetCurrentAnimatorStateInfo(0);
-        
+        AnimatorStateInfo animationInfo = animator.GetCurrentAnimatorStateInfo(0);
+
         //set the action back to idle
         if (index != -1 &&
             //animationInfo.IsName("Sword And Shield Idle")
-            !(animator.GetBool("NormalSlash") || animator.GetBool("AnotherSlash"))) {
+            !(animator.GetBool("NormalSlash") || animator.GetBool("AnotherSlash")) &&
+            animationInfo.IsName("Sword And Shield Idle") &&
+            UserPref.ENEMIES[index].isActive)
+        {
             beenHitted = false;
             // it seems that the info is changed but the animation is not reset
-            Debug.Log("im available now");
+            //Debug.Log("im available now from " + index);
             UserPref.ENEMIES[index].isActive = false;
-            index = -1;
+            reseted = true;
             resetTransform();
         }
     }
@@ -117,8 +120,9 @@ public class AnimationStateControllerNormal : MonoBehaviour
     //
     public void startAction(int i)
     {
-        if(started)
+        if (!reseted)
             return;
+        reseted = false;
         Debug.Log("Start Action"); 
         //reset before action
         resetTransform();
@@ -137,6 +141,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
                 break;
         }
         started = true;
+        UserPref.ENEMIES[index].isActive = true;
     }
     public void ActionEnd() {
         //missed
@@ -152,6 +157,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
     }
     public void Hit(double[] performance)
     {
+        /*
         switch (performance[0]) { 
             case 0:
                 print("From Missed");
@@ -163,13 +169,21 @@ public class AnimationStateControllerNormal : MonoBehaviour
                 print("From Saber");
                 break;
         }
+        */
+        if (performance[0] == -1)
+        {
+            source.PlayOneShot(clip[2]);
+            vibration(35, 2, 255, performance[1] == 0 ? true : false);
+            //print("Body hitted");
+            controller.SendMessage("Hit", new double[] { -1, counter });
+        }
         if (beenHitted)
             return;
         
         //AnimatorStateInfo animationInfo = animator.GetCurrentAnimatorStateInfo(0);
         if (animator.GetBool("NormalSlash") || animator.GetBool("AnotherSlash"))
         {
-
+            //race condition?
             animator.SetBool("AnotherSlash", false);
             animator.SetBool("NormalSlash", false);
             actionHelpers[0].SetActive(false);
@@ -180,40 +194,24 @@ public class AnimationStateControllerNormal : MonoBehaviour
                 source.PlayOneShot(clip[behaviour]);
                 vibration(75, 2, 255, performance[2] == 0 ? true : false);
                 spawnEffect();
-                print("Im hitted");
+                //print("Im hitted");
                 controller.SendMessage("Hit", new double[] { performance[0], counter, performance[1] });
-            }
-            else if (performance[0] == -1)
+            } else
             {
-                source.PlayOneShot(clip[2]);
-                vibration(35, 2, 255, performance[1] == 0 ? true : false);
-                print("Body hitted");
-                controller.SendMessage("Hit", new double[] { -1, counter });
-            }
-            else
-            {
-                print("Missed");
+                //print("Missed");
                 controller.SendMessage("Hit", new double[] { performance[0], counter });
             }
             //reset after action
             resetTransform();
         }
-        else {
-            if (performance[0] == -1)
-            {
-                source.PlayOneShot(clip[2]);
-                vibration(35, 2, 255, performance[1] == 0 ? true : false);
-                print("Body hitted");
-                controller.SendMessage("Hit", new double[] { -1, counter });
-            }
-        }
     }
 
     private void vibration(int iteration, int frequency, int strength, bool isLeft)
     {
+        int temp = strength;
         OVRHapticsClip hapticsClip = new OVRHapticsClip();
         for (int i = 0; i < iteration; i++)
-            hapticsClip.WriteSample(i % frequency == 0 ? (byte)strength : (byte)0);
+            hapticsClip.WriteSample(i % frequency == 0 ? (byte)temp-- : (byte)0);
         if (isLeft)
             OVRHaptics.LeftChannel.Preempt(hapticsClip);
         else

@@ -12,6 +12,7 @@ using Random = UnityEngine.Random;
 
 public class AdvancedSpawner : MonoBehaviour
 {
+    public AudioImporter importer;
     public GameObject hitEffect;
     public Light lightIndicator;
     public Image HPBar;
@@ -24,8 +25,7 @@ public class AdvancedSpawner : MonoBehaviour
     public Transform[] SpawnPoints;
     public Transform playerPos;
     private Transform destination;
-
-    private int indicatorFrameCount = 0;
+    private float indicatorFrameCount = 0;
     private struct Beat {
         public float timing;
         public int behaviour;
@@ -45,76 +45,40 @@ public class AdvancedSpawner : MonoBehaviour
         public int category;
     }
     private List<Performance> userPerformances = new List<Performance>();
-    private AudioClip clip = null;
-    private UnityWebRequest uwr;
-    private float[] spawnerCooldowns = new float[] { 1.2f,1.2f,1.2f,1.2f};
+    private float[] spawnerCooldowns = new float[] { 1.5f, 1.5f, 1.5f, 1.5f };
     private bool[] willFlash;
     private void Awake(){
         difficultySetting();
         currentAudio = GetComponent<AudioSource>();
-        //importer.Loaded += OnLoaded;
-        //importer.Import(UserPref.SONG_FILEPATH);
+        importer.Loaded += OnLoaded;
+        importer.Import(UserPref.SONG_FILEPATH);
         destination = playerPos;
+        
     }
-
-    private async void Start()
+    private void OnLoaded(AudioClip clip)
     {
-        clip = await LoadClip();
+        currentAudio.clip = clip;
     }
 
-    async Task<AudioClip> LoadClip()
-    {
-        AudioClip clip = null;
-        string[] allowedFileTypes = new string[] { ".mp3", ".ogg", ".wav", ".aiff", ".aif" };
-        //file.ToLower().EndsWith
-        if (UserPref.SONG_FILEPATH.ToLower().EndsWith(allowedFileTypes[0]))
-            uwr = UnityWebRequestMultimedia.GetAudioClip(UserPref.SONG_FILEPATH, AudioType.MPEG);
-        else if (UserPref.SONG_FILEPATH.ToLower().EndsWith(allowedFileTypes[1]))
-            uwr = UnityWebRequestMultimedia.GetAudioClip(UserPref.SONG_FILEPATH, AudioType.OGGVORBIS);
-        else if (UserPref.SONG_FILEPATH.ToLower().EndsWith(allowedFileTypes[2]))
-            uwr = UnityWebRequestMultimedia.GetAudioClip(UserPref.SONG_FILEPATH, AudioType.WAV);
-        else if (UserPref.SONG_FILEPATH.ToLower().EndsWith(allowedFileTypes[3]) || UserPref.SONG_FILEPATH.ToLower().EndsWith(allowedFileTypes[4]))
-            uwr = UnityWebRequestMultimedia.GetAudioClip(UserPref.SONG_FILEPATH, AudioType.AIFF);
 
-        uwr.SendWebRequest();
 
-        // wrap tasks in try/catch, otherwise it'll fail silently
-        try
-        {
-            while (!uwr.isDone) await Task.Delay(0);
-
-            if (uwr.isNetworkError || uwr.isHttpError) Debug.Log($"{uwr.error}");
-            else
-            {
-                clip = DownloadHandlerAudioClip.GetContent(uwr);
-            }
-        }
-        catch (Exception err)
-        {
-            Debug.Log($"{err.Message}, {err.StackTrace}");
-        }
-
-        return clip;
-    }
     private void FixedUpdate()
     {
         if (lightIndicator.enabled)
         {
-            indicatorFrameCount++;
-            if (indicatorFrameCount > 1)
+            indicatorFrameCount += Time.deltaTime;
+            if (indicatorFrameCount > 0.1f)
             {
                 indicatorFrameCount = 0;
                 lightIndicator.enabled = false;
             }
         }
-        HPBar.fillAmount = UserPref.HP / 100f;
-        if (clip == null)
+        if (!importer.isDone)
         {
-            loadingProgress.text = "Loading..." + (Mathf.Round(uwr.downloadProgress * 1000) / 10) + "%";
+            loadingProgress.text = "Loading..." + (Mathf.Round(importer.progress * 1000) / 10) + "%";
         }
-        if (!loaded && clip != null)
+        if (!loaded && importer.isDone)
         {
-            currentAudio.clip = clip;
             Destroy(loadingCanvas);
             currentSong = BeatDetectionModel.initializeLineOfTheAudio(currentAudio);
             BeatDetectionModel.simplifyLine(ref currentSong);
@@ -267,6 +231,7 @@ public class AdvancedSpawner : MonoBehaviour
                 UserPref.SCORE = 0;
             UserPref.HP -= 10;
 
+            HPBar.fillAmount = UserPref.HP / 100f;
             Performance np = new Performance();
             np.index = index;
             np.delay = -1;

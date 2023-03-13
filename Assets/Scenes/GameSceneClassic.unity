@@ -783,6 +783,7 @@ GameObject:
   - component: {fileID: 680266900}
   - component: {fileID: 680266901}
   - component: {fileID: 680266902}
+  - component: {fileID: 680266903}
   m_Layer: 0
   m_Name: Spawner
   m_TagString: Untagged
@@ -842,6 +843,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97590ce693df9714da1f114cc7aca78f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  importer: {fileID: 680266903}
   hitEffect: {fileID: 2141918132}
   lightIndicator: {fileID: 1910447802}
   HPBar: {fileID: 1287095287}
@@ -952,6 +954,18 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &680266903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 680266898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c85ca24aed0de7f4bb834c92b727d65b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &719679253
 PrefabInstance:
   m_ObjectHideFlags: 0
