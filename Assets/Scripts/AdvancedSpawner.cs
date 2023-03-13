@@ -23,7 +23,7 @@ public class AdvancedSpawner : MonoBehaviour
     public Transform playerPos;
     private Transform destination;
 
-    private int indicatorFrameCount = 0;
+    private float indicatorFrameCount = 0;
     private struct Beat {
         public float timing;
         public int behaviour;
@@ -44,7 +44,7 @@ public class AdvancedSpawner : MonoBehaviour
     }
     private List<Performance> userPerformances = new List<Performance>();
     private AudioClip clip = null;
-    private float[] spawnerCooldowns = new float[] { 1.2f,1.2f,1.2f,1.2f};
+    private float[] spawnerCooldowns = new float[] { 1.5f,1.5f,1.5f,1.5f};
     private bool[] willFlash;
     private void Awake(){
         difficultySetting();
@@ -59,8 +59,8 @@ public class AdvancedSpawner : MonoBehaviour
     {
         if (lightIndicator.enabled)
         {
-            indicatorFrameCount++;
-            if (indicatorFrameCount > 1)
+            indicatorFrameCount += Time.deltaTime;
+            if (indicatorFrameCount > 0.1f)
             {
                 indicatorFrameCount = 0;
                 lightIndicator.enabled = false;

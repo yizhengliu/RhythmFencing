@@ -9,7 +9,7 @@ public class Saber : MonoBehaviour
     public bool isLeft;
     public Light wrongHitIndicator;
     public LayerMask layer;
-    private int frame = 0;
+    private float frame = 0;
     private bool entered = false;
     private void FixedUpdate()
     {
@@ -17,8 +17,8 @@ public class Saber : MonoBehaviour
         //Debug.DrawRay(transform.position, transform.right, Color.red, 1f);
         //Debug.DrawRay(transform.position, transform.up, Color.green, 1f);
         if (wrongHitIndicator.color == Color.red) { 
-            frame++;
-            if (frame > 1) {
+            frame+= Time.deltaTime;
+            if (frame > 0.1f) {
                 frame = 0;
                 wrongHitIndicator.color = Color.white;
             }

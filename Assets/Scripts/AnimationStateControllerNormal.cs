@@ -23,10 +23,11 @@ public class AnimationStateControllerNormal : MonoBehaviour
 
     private Vector3 collisionPos;
     private float indicatorTimer = 0;
-    private int indicatorCount = 0;
+    private float indicatorCount = 0;
     //fix rotation problem, and transformation
     private bool beenHitted = false;
-
+    //private bool startedBythis = false;
+    private bool reseted = true;
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -45,12 +46,13 @@ public class AnimationStateControllerNormal : MonoBehaviour
     {
         if (lightIndicator.enabled)
         {
-            indicatorCount++;
-            if (indicatorCount > 1)
+            indicatorCount += Time.deltaTime; 
+            if (indicatorCount > 0.05f)
             {
                 indicatorCount = 0;
                 lightIndicator.enabled = false;
             }
+            //startedBythis = false;
         }
 
         if (started)
@@ -62,36 +64,43 @@ public class AnimationStateControllerNormal : MonoBehaviour
             {
 
                 //another slash
-                if (indicatorTimer >= 0.804)
+                if (indicatorTimer >= 0.804f)
                 {
+                    
                     indicatorTimer = 0;
                     started = false;
                     lightIndicator.enabled = true;
+                   // startedBythis = true;
                 }
             }
             else
             {
                 //normal slash
-                if (indicatorTimer >= 0.577)
+                if (indicatorTimer >= 0.577f)
                 {
+                    
                     indicatorTimer = 0;
                     started = false;
                     lightIndicator.enabled = true;
+                   // startedBythis = true; 
+                    print("enabled from " + index);
                 }
             }
+            
         }
-        //AnimatorStateInfo animationInfo = animator.GetCurrentAnimatorStateInfo(0);
+        AnimatorStateInfo animationInfo = animator.GetCurrentAnimatorStateInfo(0);
         //if((!(animator.GetBool("NormalSlash") || animator.GetBool("AnotherSlash"))&& UserPref.ENEMIES[index].isActive)
         //set the action back to idle
         if (index != -1 &&
             //animationInfo.IsName("Sword And Shield Idle")
-            !(animator.GetBool("NormalSlash") || animator.GetBool("AnotherSlash") &&
-            UserPref.ENEMIES[index].isActive)) {
+            !(animator.GetBool("NormalSlash") || animator.GetBool("AnotherSlash")) &&
+            animationInfo.IsName("Sword And Shield Idle")&&
+            UserPref.ENEMIES[index].isActive) {
             beenHitted = false;
             // it seems that the info is changed but the animation is not reset
             //Debug.Log("im available now from " + index);
             UserPref.ENEMIES[index].isActive = false;
-            
+            reseted = true;
             resetTransform();
         }
     }
@@ -111,9 +120,9 @@ public class AnimationStateControllerNormal : MonoBehaviour
     //
     public void startAction(int i)
     {
-        if(started)
+        if (!reseted)
             return;
-        
+        reseted = false;
         //reset before action
         resetTransform();
         startTime = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond;
@@ -131,6 +140,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
                 break;
         }
         started = true;
+        UserPref.ENEMIES[index].isActive = true;
     }
     public void ActionEnd() {
         //missed
@@ -197,9 +207,10 @@ public class AnimationStateControllerNormal : MonoBehaviour
 
     private void vibration(int iteration, int frequency, int strength, bool isLeft)
     {
+        int temp = strength;
         OVRHapticsClip hapticsClip = new OVRHapticsClip();
         for (int i = 0; i < iteration; i++)
-            hapticsClip.WriteSample(i % frequency == 0 ? (byte)strength : (byte)0);
+            hapticsClip.WriteSample(i % frequency == 0 ? (byte)temp-- : (byte)0);
         if (isLeft)
             OVRHaptics.LeftChannel.Preempt(hapticsClip);
         else

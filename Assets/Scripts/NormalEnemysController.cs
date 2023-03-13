@@ -81,7 +81,7 @@ public class NormalEnemysController : MonoBehaviour
             timer += Time.deltaTime;
             if (!currentAudio.isPlaying)
                 //time
-                if (timer > 0.804f && timer < 30f)
+                if (timer > 0.804f && timer < 3f)
                     currentAudio.Play();
             SendMessages();
             if (counter == beats.Length && !currentAudio.isPlaying && timer > 0.804f + currentAudio.clip.length + 3f) {
@@ -141,7 +141,7 @@ public class NormalEnemysController : MonoBehaviour
             //send messages
             //possible indexs
             List<int> possible = UserPref.ENEMIES.Where(e => e.isActive == false).Select(e => e.index).ToList();
-
+            /*
             //if possible
             string pe = "";
             
@@ -149,13 +149,13 @@ public class NormalEnemysController : MonoBehaviour
                 pe += possible[i];
                 pe += " ";
             }
-            //Debug.Log("Possible enemy: " + pe);
+            Debug.Log("Possible enemy: " + pe);
+            */
             if (possible.Count > 0) {
                 int ran = Random.Range(0, possible.Count);
                 enemies[possible[ran]].SendMessage("setBehaviour", beats[counter].behaviour);
                 enemies[possible[ran]].SendMessage("counterIndex", counter);
                 enemies[possible[ran]].SendMessage("startAction", possible[ran]);
-                UserPref.ENEMIES[possible[ran]].isActive = true;
             }
             counter++;
         }

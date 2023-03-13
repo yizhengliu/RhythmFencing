@@ -4445,19 +4445,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2267356546274402640, guid: b027bc5a07a75db41976fdcf86c88960, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.8754261
+      value: 0.8672178
       objectReference: {fileID: 0}
     - target: {fileID: 2267356546274402640, guid: b027bc5a07a75db41976fdcf86c88960, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.40821788
+      value: 0.4602242
       objectReference: {fileID: 0}
     - target: {fileID: 2267356546274402640, guid: b027bc5a07a75db41976fdcf86c88960, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.23456968
+      value: -0.099289544
       objectReference: {fileID: 0}
     - target: {fileID: 2267356546274402640, guid: b027bc5a07a75db41976fdcf86c88960, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.10938163
+      value: -0.16207586
       objectReference: {fileID: 0}
     - target: {fileID: 2267356546274402640, guid: b027bc5a07a75db41976fdcf86c88960, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -4469,7 +4469,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2267356546274402640, guid: b027bc5a07a75db41976fdcf86c88960, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: -35.416
       objectReference: {fileID: 0}
     - target: {fileID: 2267356546274402646, guid: b027bc5a07a75db41976fdcf86c88960, type: 3}
       propertyPath: m_Name
@@ -4478,6 +4478,14 @@ PrefabInstance:
     - target: {fileID: 2267356546274402646, guid: b027bc5a07a75db41976fdcf86c88960, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 2267356546274402647, guid: b027bc5a07a75db41976fdcf86c88960, type: 3}
+      propertyPath: m_Type
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2267356546274402647, guid: b027bc5a07a75db41976fdcf86c88960, type: 3}
+      propertyPath: m_DrawHalo
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2267356546274402647, guid: b027bc5a07a75db41976fdcf86c88960, type: 3}
       propertyPath: m_Lightmapping
