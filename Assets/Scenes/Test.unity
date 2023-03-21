@@ -973,7 +973,6 @@ GameObject:
   - component: {fileID: 1421193860}
   - component: {fileID: 1421193859}
   - component: {fileID: 1421193858}
-  - component: {fileID: 1421193857}
   m_Layer: 5
   m_Name: Test Canvas
   m_TagString: Untagged
@@ -981,18 +980,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1421193857
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1421193856}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c85ca24aed0de7f4bb834c92b727d65b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1421193858
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1008,7 +995,6 @@ MonoBehaviour:
   helper: {fileID: 617917986}
   loadingCanvas: {fileID: 41922614}
   loadingProgress: {fileID: 1717210171}
-  importer: {fileID: 1421193857}
   beatDetectionButton: {fileID: 878209152}
   userDetectionButton: {fileID: 444376868}
 --- !u!82 &1421193859

@@ -21,6 +21,7 @@ public class Saber : MonoBehaviour
             if (frame > 0.1f) {
                 frame = 0;
                 wrongHitIndicator.color = Color.white;
+                wrongHitIndicator.enabled = false;
             }
         }
     }
@@ -82,6 +83,7 @@ public class Saber : MonoBehaviour
             entered = true;
             collision.gameObject.SendMessage("Hit", new double[] { -1 , isLeft ? 0 : 1});
             wrongHitIndicator.color = Color.red;
+            wrongHitIndicator.enabled = true;
         }
     }
 
