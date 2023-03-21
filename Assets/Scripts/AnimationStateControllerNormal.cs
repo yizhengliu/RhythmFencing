@@ -51,10 +51,10 @@ public class AnimationStateControllerNormal : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        if (lightIndicator.enabled)
+        if (lightIndicator.enabled && lightIndicator.color == Color.white)
         {
             indicatorCount += Time.deltaTime;
-            if (indicatorCount > 0.05f)
+            if (indicatorCount > 0.1f)
             {
                 indicatorCount = 0;
                 lightIndicator.enabled = false;

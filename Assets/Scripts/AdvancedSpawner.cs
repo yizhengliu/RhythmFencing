@@ -64,7 +64,7 @@ public class AdvancedSpawner : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (lightIndicator.enabled)
+        if (lightIndicator.enabled && lightIndicator.color == Color.white)
         {
             indicatorFrameCount += Time.deltaTime;
             if (indicatorFrameCount > 0.1f)

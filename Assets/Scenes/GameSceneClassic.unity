@@ -617,7 +617,7 @@ PrefabInstance:
     - target: {fileID: 8012353166351995741, guid: 7e8e2f7fd6f178a429380a72218be379, type: 3}
       propertyPath: wrongHitIndicator
       value: 
-      objectReference: {fileID: 568733191}
+      objectReference: {fileID: 1910447802}
     - target: {fileID: 8012353166351995741, guid: 7e8e2f7fd6f178a429380a72218be379, type: 3}
       propertyPath: visualHitEffect.Array.size
       value: 3
@@ -637,11 +637,6 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 8012353166351995742, guid: 7e8e2f7fd6f178a429380a72218be379, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 7e8e2f7fd6f178a429380a72218be379, type: 3}
---- !u!108 &568733191 stripped
-Light:
-  m_CorrespondingSourceObject: {fileID: 2641936058866897495, guid: 3119dc662f365bc479cfccb304296719, type: 3}
-  m_PrefabInstance: {fileID: 977677010}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &569987404
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1064,7 +1059,7 @@ PrefabInstance:
     - target: {fileID: 8012353166351995741, guid: 7e8e2f7fd6f178a429380a72218be379, type: 3}
       propertyPath: wrongHitIndicator
       value: 
-      objectReference: {fileID: 568733191}
+      objectReference: {fileID: 1910447802}
     - target: {fileID: 8012353166351995741, guid: 7e8e2f7fd6f178a429380a72218be379, type: 3}
       propertyPath: visualHitEffect.Array.size
       value: 3

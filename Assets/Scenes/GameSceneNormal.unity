@@ -292,7 +292,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isLeft: 0
-  wrongHitIndicator: {fileID: 1866115033}
+  wrongHitIndicator: {fileID: 1874212083}
   layer:
     serializedVersion: 2
     m_Bits: 5248
@@ -1893,11 +1893,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
---- !u!108 &1866115033 stripped
-Light:
-  m_CorrespondingSourceObject: {fileID: 2641936058866897495, guid: 3119dc662f365bc479cfccb304296719, type: 3}
-  m_PrefabInstance: {fileID: 2641936060597417358}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1871966448
 GameObject:
   m_ObjectHideFlags: 0
@@ -2876,7 +2871,7 @@ PrefabInstance:
     - target: {fileID: 8012353166351995741, guid: 7e8e2f7fd6f178a429380a72218be379, type: 3}
       propertyPath: wrongHitIndicator
       value: 
-      objectReference: {fileID: 1866115033}
+      objectReference: {fileID: 1874212083}
     - target: {fileID: 8012353166351995741, guid: 7e8e2f7fd6f178a429380a72218be379, type: 3}
       propertyPath: visualHitEffect.Array.size
       value: 3
