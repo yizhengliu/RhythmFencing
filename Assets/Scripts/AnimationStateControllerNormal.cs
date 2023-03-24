@@ -198,6 +198,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
             } else
             {
                 //print("Missed");
+                source.PlayOneShot(clip[3]);
                 controller.SendMessage("Hit", new double[] { performance[0], counter });
             }
             //reset after action
