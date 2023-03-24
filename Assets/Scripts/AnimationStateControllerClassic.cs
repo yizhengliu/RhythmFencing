@@ -121,7 +121,8 @@ public class AnimationStateControllerClassic : MonoBehaviour
                 print("from saber");
                 controller.SendMessage("Hit", new double[] { performance[0], counter, performance[1] });
                 Destroy(this.gameObject);
-            }
+            } else
+                controller.SendMessage("playHitEffect", 3);
         }
     }
 

@@ -29,4 +29,16 @@ public static class UserPref
     public static int GOOD = 0;
     public static int PERFECT = 0;
     public static int PUNISHED = 0;
+
+    public static void reset() {
+        HP = 100;
+        SCORE = 0;
+        PUNISHED = 0;
+        COMBO = 0;
+        MAX_COMBO = 0;
+        MISSED = 0;
+        NORMAL = 0;
+        GOOD = 0;
+        PERFECT = 0;
+    }
 }

@@ -9,8 +9,6 @@ public static class BeatDetectionModel {
     public class Point {
         public int index = -1;
         public float timeInSong = -1;
-        public int startFromSample = -1;
-        public int finishAtSample = -1;
         public float energy = 0;
         public bool isSimplified = false;
         public bool isBeat = false;
@@ -21,22 +19,16 @@ public static class BeatDetectionModel {
                 sb.Append("\n\t");
                 sb.Append("index".PadRight(10));
                 sb.Append("timeInSong".PadRight(20));
-                sb.Append("startsample".PadRight(20));
-                sb.Append("endsample".PadRight(20));
                 sb.Append("energy".PadRight(20));
 
                 sb.Append("\n\t");
                 sb.Append("---------".PadRight(10));
                 sb.Append("-------------------".PadRight(20));
                 sb.Append("-------------------".PadRight(20));
-                sb.Append("-------------------".PadRight(20));
-                sb.Append("-------------------".PadRight(20));
             } else {
                 sb.Append("\t");
                 sb.Append(index.ToString().PadRight(10));
                 sb.Append(timeInSong.ToString().PadRight(20));
-                sb.Append(startFromSample.ToString().PadRight(20));
-                sb.Append(finishAtSample.ToString().PadRight(20));
                 sb.Append(energy.ToString().PadRight(20));
             }
             return sb.ToString();
@@ -56,21 +48,21 @@ public static class BeatDetectionModel {
         //memory dynamically which could cause the speed goes down
         song.Capacity = (int)(samples.Length / (float)UserPref.SAMPLES_PER_POINT + 1);
         int indexCounter = 0;
+        int finishAtSample;
         for (int i = 0; i < samples.Length; i += UserPref.SAMPLES_PER_POINT) {
             Point point = new Point();
             point.index = indexCounter++;
-            point.startFromSample = i;
             //if i + 1023 <= samples.length - 1, means it would get out of the bound
             if (i + UserPref.SAMPLES_PER_POINT <= samples.Length)
-                point.finishAtSample = i + UserPref.SAMPLES_PER_POINT - 1;
+                finishAtSample = i + UserPref.SAMPLES_PER_POINT - 1;
             else
-                point.finishAtSample = samples.Length - 1;
+                finishAtSample = samples.Length - 1;
             //frequency indicates how many samples per second actually in the song,
             //the equation in the bracket cauculates 
-            point.timeInSong = (point.startFromSample /
+            point.timeInSong = (i /
                 (float)currentAudio.clip.channels) / (float)currentAudio.clip.frequency;
             float energySum = 0;
-            for (int j = point.startFromSample; j <= point.finishAtSample; j += currentAudio.clip.channels) {
+            for (int j = i; j <= finishAtSample; j += currentAudio.clip.channels) {
                 int temp = currentAudio.clip.channels - 1;
                 float sum = 0;
                 while (temp >= 0) {

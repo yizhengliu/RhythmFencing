@@ -269,9 +269,11 @@ public class AdvancedSpawner : MonoBehaviour
 
         Debug.Log("score: " + UserPref.SCORE);
         score.text = "Score: " + UserPref.SCORE;
-        string addition = "";
-        combo.color = Color.white;
-        if (performance == 1)
+        string addition = "MISSED";
+        combo.color = Color.red;
+        if (performance == -1)
+            addition = "PUNISHED";
+        else if (performance == 1)
         {
             UserPref.NORMAL++;
             addition = "NORMAL";

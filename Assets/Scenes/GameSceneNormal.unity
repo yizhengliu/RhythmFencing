@@ -986,6 +986,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 620ed85ea7f4bd14b8d7f2845c02843c, type: 3}
   - {fileID: 8300000, guid: b882c21f15e7b8942b85d80030f78285, type: 3}
   - {fileID: 8300000, guid: 503148a81e5fb8f4388505928773e81c, type: 3}
+  - {fileID: 8300000, guid: f490b937d535fa7478d7d4360722d1b7, type: 3}
   lightIndicator: {fileID: 1874212083}
   controller: {fileID: 2131047741}
 --- !u!82 &1106288798
@@ -1618,6 +1619,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 620ed85ea7f4bd14b8d7f2845c02843c, type: 3}
   - {fileID: 8300000, guid: b882c21f15e7b8942b85d80030f78285, type: 3}
   - {fileID: 8300000, guid: 503148a81e5fb8f4388505928773e81c, type: 3}
+  - {fileID: 8300000, guid: f490b937d535fa7478d7d4360722d1b7, type: 3}
   lightIndicator: {fileID: 1874212083}
   controller: {fileID: 2131047741}
 --- !u!82 &1661330229
@@ -2102,6 +2104,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 620ed85ea7f4bd14b8d7f2845c02843c, type: 3}
   - {fileID: 8300000, guid: b882c21f15e7b8942b85d80030f78285, type: 3}
   - {fileID: 8300000, guid: 503148a81e5fb8f4388505928773e81c, type: 3}
+  - {fileID: 8300000, guid: f490b937d535fa7478d7d4360722d1b7, type: 3}
   lightIndicator: {fileID: 1874212083}
   controller: {fileID: 2131047741}
 --- !u!4 &2026190024 stripped
