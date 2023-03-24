@@ -26,14 +26,7 @@ public class ResultController : MonoBehaviour
     }
 
     public void onClickBack() {
-        UserPref.HP = 100;
-        UserPref.SCORE = 0;
-        UserPref.COMBO = 0;
-        UserPref.MISSED = 0;
-        UserPref.NORMAL = 0;
-        UserPref.GOOD = 0;
-        UserPref.PERFECT = 0;
-        UserPref.MAX_COMBO = 0;
+        UserPref.reset();
         SceneManager.LoadScene("StartMenu");
     }
 }
