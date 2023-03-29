@@ -192,21 +192,14 @@ public static class BeatDetectionModel {
     {
         double dx = lineEnd.timeInSong - lineStart.timeInSong;
         double dy = lineEnd.energy - lineStart.energy;
-
-        double mag = Mathf.Sqrt((float)(dx * dx + dy * dy));
-        if (mag > 0.0)
-        {
-            dx /= mag;
-            dy /= mag;
-        }
         double pvx = pt.timeInSong - lineStart.timeInSong;
         double pvy = pt.energy - lineStart.energy;
 
-        double pvdot = dx * pvx + dy * pvy;
+        double doubleArea = dx * pvy - dy * pvx;
+        if (doubleArea < 0)
+            doubleArea = -doubleArea;
+        double triangleBase = Mathf.Sqrt((float)(dx * dx + dy * dy));
 
-        double ax = pvx - pvdot * dx;
-        double ay = pvy - pvdot * dy;
-
-        return Mathf.Sqrt((float)(ax * ax + ay * ay));
+        return doubleArea / triangleBase;
     }
 }
