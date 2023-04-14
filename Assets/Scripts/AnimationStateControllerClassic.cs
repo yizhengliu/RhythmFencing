@@ -71,7 +71,7 @@ public class AnimationStateControllerClassic : MonoBehaviour
     }
     public void ActionEnd() {
         //missed
-        controller.SendMessage("Hit", new double[] { 0, counter });
+        Hit(new double[] { 0 });
         Destroy(this.gameObject);
     }
     public void actionPerformed(int animationType) {
@@ -121,8 +121,11 @@ public class AnimationStateControllerClassic : MonoBehaviour
                 print("from saber");
                 controller.SendMessage("Hit", new double[] { performance[0], counter, performance[1] });
                 Destroy(this.gameObject);
-            } else
+            }
+            else {
                 controller.SendMessage("playHitEffect", 3);
+                controller.SendMessage("Hit", new double[] { 0, counter });
+            }
         }
     }
 
