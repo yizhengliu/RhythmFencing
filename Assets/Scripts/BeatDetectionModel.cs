@@ -12,7 +12,7 @@ public static class BeatDetectionModel {
         public float energy = 0;
         public bool isSimplified = false;
         public bool isBeat = false;
-        public Vector2 position;
+        //public Vector2 position;
         public string printPoint(bool head) {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
             if (head == true) {
@@ -75,7 +75,7 @@ public static class BeatDetectionModel {
                 energySum += sum / (float)currentAudio.clip.channels;
             }
             point.energy = Mathf.Abs((energySum / UserPref.SAMPLES_PER_POINT) * UserPref.SCALE);
-            point.position = new Vector2(point.timeInSong, point.energy);
+            //point.position = new Vector2(point.timeInSong, point.energy);
             song.Add(point);
         }
         return song;

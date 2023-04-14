@@ -6,6 +6,7 @@ public class DifficultyController : MonoBehaviour
 {
     private TMPro.TMP_Dropdown difficultyDropDown;
 
+    //set up onclick listener for difficulty dropdown menu
     void Start()
     {
         difficultyDropDown = GetComponent<TMPro.TMP_Dropdown>();
@@ -15,7 +16,7 @@ public class DifficultyController : MonoBehaviour
         difficultyDropDown.value = UserPref.DIFFICULTY_LEVEL;
         //Debug.Log("You have selected difficulty: " + UserPref.DIFFICULTY_LEVEL);
     }
-
+    
     private void onValueChanged(TMPro.TMP_Dropdown dropdown) {
         UserPref.DIFFICULTY_LEVEL = dropdown.value;
         //Debug.Log("You have selected difficulty: " + UserPref.DIFFICULTY_LEVEL);
