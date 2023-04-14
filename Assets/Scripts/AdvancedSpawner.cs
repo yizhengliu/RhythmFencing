@@ -323,7 +323,7 @@ public class AdvancedSpawner : MonoBehaviour
 #endif
     }
 
-    private void playHitEffect(int behaviour) {
+    public void playHitEffect(int behaviour) {
         hitEffect.SendMessage("playHitEffect", behaviour);
     }
 }
