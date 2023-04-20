@@ -16,6 +16,7 @@ public class Saber : MonoBehaviour
         //Debug.DrawRay(transform.position, transform.forward, Color.blue, 1f);
         //Debug.DrawRay(transform.position, transform.right, Color.red, 1f);
         //Debug.DrawRay(transform.position, transform.up, Color.green, 1f);
+        //show red flash if user attack the body of enemies for at least 1s
         if (wrongHitIndicator.color == Color.red) { 
             frame+= Time.deltaTime;
             if (frame > 0.1f) {
@@ -56,14 +57,16 @@ public class Saber : MonoBehaviour
             entered = false;
     }
     */
+
     private void OnCollisionEnter(Collision collision)
     {
         //print("on collision" + collision.gameObject.layer.ToString());
         //the first point of collision
         Vector3 collisionEnterPoint = collision.contacts[0].point;
-        //for effect
+        //for effect spawn
         
         int performance = 0;
+        //check swords collision
         if (collision.gameObject.layer == LayerMask.NameToLayer("Sword"))
         {
             float saberAngle = Vector3.Angle(transform.up, collision.transform.forward);
@@ -77,7 +80,7 @@ public class Saber : MonoBehaviour
            collision.gameObject.SendMessage("Hit", new double[] { performance, saberAngle, isLeft ? 0 : 1 });
 
         }
-
+        //or entered body
         else if (!entered && collision.gameObject.layer == LayerMask.NameToLayer("Body"))
         {
             entered = true;
@@ -86,7 +89,7 @@ public class Saber : MonoBehaviour
             wrongHitIndicator.enabled = true;
         }
     }
-
+    //check user's sword exited body
     private void OnCollisionExit(Collision collision)
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Body"))

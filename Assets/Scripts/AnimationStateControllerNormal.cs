@@ -33,6 +33,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
         animator = GetComponent<Animator>();
         source = GetComponent<AudioSource>();
     }
+    //reset 3D model position
     private void resetTransform() {
         transform.position = stationaryPoint;
         transform.rotation = stationaryRotation;
@@ -42,8 +43,10 @@ public class AnimationStateControllerNormal : MonoBehaviour
         stationaryRotation = transform.rotation;
         stationaryPoint = transform.position;
     }
+
     private void FixedUpdate()
     {
+        //at least show the white flash indicator for 0.1s
         if (lightIndicator.enabled && lightIndicator.color == Color.white)
         {
             indicatorCount += Time.deltaTime; 
@@ -54,7 +57,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
             }
             //startedBythis = false;
         }
-
+        //trigger white flash indicator
         if (started)
         {
             indicatorTimer += Time.deltaTime;
@@ -97,14 +100,13 @@ public class AnimationStateControllerNormal : MonoBehaviour
             animationInfo.IsName("Sword And Shield Idle")&&
             UserPref.ENEMIES[index].isActive) {
             beenHitted = false;
-            // it seems that the info is changed but the animation is not reset
             //Debug.Log("im available now from " + index);
             UserPref.ENEMIES[index].isActive = false;
             reseted = true;
             resetTransform();
         }
     }
-
+    //use this event function to record the time
     /*
     public void actionPerformed(int animationType)
     {
@@ -117,7 +119,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
         
     }
     */
-    //
+    //switch to slash animation
     public void startAction(int i)
     {
         if (!reseted)
@@ -143,7 +145,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
         UserPref.ENEMIES[index].isActive = true;
     }
     public void ActionEnd() {
-        //missed
+        //interaction missed
         Hit(new double[] {0});
     }
 
@@ -169,6 +171,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
                 break;
         }
         */
+        //if user hits body
         if (performance[0] == -1)
         {
             source.PlayOneShot(clip[2]);
@@ -180,13 +183,14 @@ public class AnimationStateControllerNormal : MonoBehaviour
             return;
         
         //AnimatorStateInfo animationInfo = animator.GetCurrentAnimatorStateInfo(0);
+        //if correct interaction
         if (animator.GetBool("NormalSlash") || animator.GetBool("AnotherSlash"))
         {
-            //race condition?
             animator.SetBool("AnotherSlash", false);
             animator.SetBool("NormalSlash", false);
             actionHelpers[0].SetActive(false);
             actionHelpers[1].SetActive(false);
+            //if user successfully fenced
             if (performance[0] > 0)
             {
                 beenHitted = true;
@@ -197,6 +201,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
                 controller.SendMessage("Hit", new double[] { performance[0], counter, performance[1] });
             } else
             {
+                //missed
                 //print("Missed");
                 source.PlayOneShot(clip[3]);
                 controller.SendMessage("Hit", new double[] { performance[0], counter });
@@ -205,7 +210,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
             resetTransform();
         }
     }
-
+    //vibrate controllers
     private void vibration(int iteration, int frequency, int strength, bool isLeft)
     {
         int temp = strength;
@@ -217,7 +222,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
         else
             OVRHaptics.RightChannel.Preempt(hapticsClip);
     }
-
+    //spawn visual hit effects
     private void spawnEffect()
     {
         int r = Random.Range(0, 3);
@@ -225,6 +230,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
         newEffect.transform.position = collisionPos;
         newEffect.transform.LookAt(Camera.main.transform);
     }
+    //tranfer the collision point
     public void passPos(Vector3 cep)
     {
         collisionPos = cep;

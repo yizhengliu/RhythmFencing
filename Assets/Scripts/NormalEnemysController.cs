@@ -61,7 +61,7 @@ public class NormalEnemysController : MonoBehaviour
     private void FixedUpdate() {
         
 
-        
+        //check if clip is not analysised
         if (clip != null && !loaded) {
             currentAudio.clip = clip;
             Destroy(loadingCanvas);
@@ -77,6 +77,7 @@ public class NormalEnemysController : MonoBehaviour
             //or using mannually set up 
             //setupManually();
         }
+        //if analysised, start the audio and constently send beats information to enemies
         if (loaded) {
             timer += Time.deltaTime;
             if (!currentAudio.isPlaying)
@@ -84,13 +85,14 @@ public class NormalEnemysController : MonoBehaviour
                 if (timer > 0.804f && timer < 3f)
                     currentAudio.Play();
             SendMessages();
+            //if song is finished, go to game over scene
             if (counter == beats.Length && !currentAudio.isPlaying && timer > 0.804f + currentAudio.clip.length + 3f) {
                 saveUserPerformance();
                 SceneManager.LoadScene("GameOver");
             }
         }
     }
-
+    //based on the result of beat detection model, return beats series and correlated random animation behaviours
     private void addToBeats() {
         BeatDetectionModel.Point[] upBeats = currentSong.Where(x => x.isBeat == true).ToArray();
         beats = new Beat[upBeats.Length];
@@ -112,7 +114,7 @@ public class NormalEnemysController : MonoBehaviour
 
         }
     }
-
+    //load txt beat sheet
     private void setupManually() {
         TextAsset textAsset = Resources.Load("Labels_1") as TextAsset;
 
@@ -135,7 +137,7 @@ public class NormalEnemysController : MonoBehaviour
             }
         }
     }
-
+    //send idle enemies messages to slash 
     private void SendMessages() {
         if (counter < beats.Length && timer > beats[counter].timing) {
             //send messages
@@ -160,7 +162,7 @@ public class NormalEnemysController : MonoBehaviour
             counter++;
         }
     }
-
+    //based on the choice made on main menu UI, change the tolerance
     private void difficultySetting()
     {
         if (UserPref.DIFFICULTY_LEVEL == 0)
@@ -225,7 +227,7 @@ public class NormalEnemysController : MonoBehaviour
             np.category = performance;
             userPerformances.Add(np);
         }
-
+        //UI update
         //Debug.Log("score: " + UserPref.SCORE);
         score.text = "Score: " + UserPref.SCORE;
         string addition = "MISSED";

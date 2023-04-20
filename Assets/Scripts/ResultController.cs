@@ -9,7 +9,7 @@ public class ResultController : MonoBehaviour
     public TMPro.TextMeshProUGUI scoreDisplay;
     public TMPro.TextMeshProUGUI maxComboDisplay;
     public Text performancesDisplay;
-    // Start is called before the first frame update
+    // show ingame performance
     void Start() {
         
         scoreDisplay.text = "Your Score: " + UserPref.SCORE;
@@ -24,7 +24,7 @@ public class ResultController : MonoBehaviour
         songNameDisplay.text =
         "Song Name: " + UserPref.CLIP_SELECTED.name;
     }
-
+    //go back to main menu
     public void onClickBack() {
         UserPref.reset();
         SceneManager.LoadScene("StartMenu");
