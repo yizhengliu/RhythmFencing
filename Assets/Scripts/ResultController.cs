@@ -9,7 +9,7 @@ public class ResultController : MonoBehaviour
     public TMPro.TextMeshProUGUI scoreDisplay;
     public TMPro.TextMeshProUGUI maxComboDisplay;
     public Text performancesDisplay;
-    // Start is called before the first frame update
+    // show ingame performance
     void Start() {
         
 
@@ -26,6 +26,7 @@ public class ResultController : MonoBehaviour
         System.Environment.SpecialFolder.MyMusic) + "\\", "");
     }
 
+    //go back to main menu
     public void onClickBack() {
         UserPref.reset();
         SceneManager.LoadScene("StartMenu");

@@ -33,7 +33,10 @@ public class AnimationStateControllerNormal : MonoBehaviour
         animator = GetComponent<Animator>();
         source = GetComponent<AudioSource>();
     }
-    private void resetTransform() {
+    ioSource>();
+    }
+//reset 3D model position
+private void resetTransform() {
         transform.position = stationaryPoint;
         transform.rotation = stationaryRotation;
     }
@@ -50,8 +53,9 @@ public class AnimationStateControllerNormal : MonoBehaviour
        
     }
     private void FixedUpdate()
-    {
-        if (lightIndicator.enabled && lightIndicator.color == Color.white)
+{
+    //at least show the white flash indicator for 0.1s
+    if (lightIndicator.enabled && lightIndicator.color == Color.white)
         {
             indicatorCount += Time.deltaTime;
             if (indicatorCount > 0.1f)
@@ -61,7 +65,8 @@ public class AnimationStateControllerNormal : MonoBehaviour
             }
         }
 
-        if (started)
+    //trigger white flash indicator
+    if (started)
         {
             indicatorTimer += Time.deltaTime;
             //type 0 another slash: 1135 804
@@ -98,7 +103,6 @@ public class AnimationStateControllerNormal : MonoBehaviour
             UserPref.ENEMIES[index].isActive)
         {
             beenHitted = false;
-            // it seems that the info is changed but the animation is not reset
             //Debug.Log("im available now from " + index);
             UserPref.ENEMIES[index].isActive = false;
             reseted = true;
@@ -106,6 +110,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
         }
     }
 
+    //use this event function to record the time
     public void actionPerformed(int animationType)
     {
         string at_ = animator.GetBool("NormalSlash") ? "Normal Slash" : "Another Slash";
@@ -117,7 +122,8 @@ public class AnimationStateControllerNormal : MonoBehaviour
         
     }
 
-    //
+    
+    //switch to slash animation
     public void startAction(int i)
     {
         if (!reseted)
@@ -170,6 +176,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
                 break;
         }
         */
+        //if user hits body
         if (performance[0] == -1)
         {
             source.PlayOneShot(clip[2]);
@@ -181,6 +188,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
             return;
         
         //AnimatorStateInfo animationInfo = animator.GetCurrentAnimatorStateInfo(0);
+        //if correct interaction
         if (animator.GetBool("NormalSlash") || animator.GetBool("AnotherSlash"))
         {
             //race condition?
@@ -206,7 +214,7 @@ public class AnimationStateControllerNormal : MonoBehaviour
             resetTransform();
         }
     }
-
+    //vibrate controllers
     private void vibration(int iteration, int frequency, int strength, bool isLeft)
     {
         int temp = strength;
@@ -219,13 +227,14 @@ public class AnimationStateControllerNormal : MonoBehaviour
             OVRHaptics.RightChannel.Preempt(hapticsClip);
     }
 
+    //spawn visual hit effects
     private void spawnEffect()
     {
         int r = Random.Range(0, 3);
         GameObject newEffect = Instantiate(visualHitEffect[r]);
         newEffect.transform.position = collisionPos;
         newEffect.transform.LookAt(Camera.main.transform);
-    }
+    }  //tranfer the collision point
     public void passPos(Vector3 cep)
     {
         collisionPos = cep;

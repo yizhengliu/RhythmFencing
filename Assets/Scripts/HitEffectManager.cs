@@ -10,6 +10,7 @@ public class HitEffectManager : MonoBehaviour
     {
         m_Source = GetComponent<AudioSource>();
     }
+    //play fencing sound effect based on enemy's behaviour
     public void playHitEffect(int behaviour) {
         m_Source.PlayOneShot(audioClips[behaviour]);
     }

@@ -22,32 +22,44 @@ public class TestController : MonoBehaviour
     private Image beatDetectionImage;
     private Image playerImage;
 
+    //beat counter
     private int counter = 0;
+    //whether the audio is analysised
     private bool loaded = false;
+    //timer for constantly change color of the button
     private float localTimer = 0;
     private float userTimer = 0;
     private bool keyPressed = false;
+    //keep tracking the timing of the last beat
     private float lastBeatTime = -1;
+    //analysised beats
     private BeatDetectionModel.Point[] beats;
+    //user detection record
     private List<float> record = new List<float>();
+    //the audio selected from start menu
     private AudioClip clip = null;
-
+    //run time loading
     private UnityWebRequest uwr;
     public void onClickButton()
     {
+        //if first time clicked, remove helper
         if (helper.enabled)
             helper.enabled = false;
+        //if song is finished, guide back
         if (counter == beats.Length)
         {
             saveUserBeats();
             SceneManager.LoadScene("StartMenu");
         }
         //beatDetectionButton.text;
+        //if it is first time pressed, calculate the difference of timing from
+        //the first beat and the click timing
         if (lastBeatTime == -1 && currentAudio.isPlaying)
         {
             delay.text = "Delay: " + (currentAudio.time - beats[0].timeInSong);
             record.Add(currentAudio.time);
         }
+        //otherwise calcullate the difference of timing from last beat and current beat.
         if (lastBeatTime != -1 && currentAudio.isPlaying)
         {
             delay.text = "Delay: " + (currentAudio.time - lastBeatTime) + "s";
@@ -97,6 +109,8 @@ public class TestController : MonoBehaviour
     {
         clip = await LoadClip();
     }
+
+    //fixed tolerance and initalize attributes
     private void Awake() {
         UserPref.TOLERANCE = 0.5f;
         currentAudio = GetComponent<AudioSource>();
@@ -111,7 +125,7 @@ public class TestController : MonoBehaviour
     }
 
     private void FixedUpdate() {
-
+        //run time loading
         if (clip == null)
         {
             loadingProgress.text = "Loading..." + (Mathf.Round(uwr.downloadProgress * 1000) / 10) + "%";
@@ -132,10 +146,13 @@ public class TestController : MonoBehaviour
             }
             
         }
+        
         if (keyPressed) {
             keyPressed = false;
             onClickButton();
         }
+
+        //if have not got the beat sheet go back to analysis
         if (!loaded && clip != null) {
             currentAudio.clip = clip;
             Destroy(loadingCanvas);
@@ -143,12 +160,17 @@ public class TestController : MonoBehaviour
             currentAudio.Play();
             loaded = true;
         }
-        if (currentAudio.isPlaying){
+        //if analysis is done
+        if (currentAudio.isPlaying)
+        {
+            //if button color is not white, timer start to record the time
             if (beatDetectionImage.color.r != 1f)
                 localTimer += Time.deltaTime;
             if (playerImage.color.r != 1f)
                 userTimer += Time.deltaTime;
+            //change the color of the button
             changeColor();
+            //graduatly change the color back to white
             if (beatDetectionImage.color.r != 1f && localTimer > 0.05f)
             {
                 localTimer -= 0.05f;
@@ -168,7 +190,8 @@ public class TestController : MonoBehaviour
         }
         
     }
-
+    //if we have got a beat, we change the color of the button, if all beats are finished, inform the
+    //user by render text onto the button
     private void changeColor() {
         if (counter < beats.Length && currentAudio.time > beats[counter].timeInSong) {
             beatDetectionImage.color = Color.blue;
@@ -182,6 +205,7 @@ public class TestController : MonoBehaviour
     }
 
 
+    //ask beat detection model for beats informaiton 
     private void findBeats() {
         List<BeatDetectionModel.Point> song = BeatDetectionModel.initializeLineOfTheAudio(currentAudio);
         BeatDetectionModel.simplifyLine(ref song);
@@ -190,6 +214,7 @@ public class TestController : MonoBehaviour
         beats = song.Where(x => x.isBeat == true).ToArray();
     }
 
+    //save user detected beats
     private void saveUserBeats() {
         string path =  "/sdcard/Download/UserBeatDetection.txt";
 #if UNITY_EDITOR

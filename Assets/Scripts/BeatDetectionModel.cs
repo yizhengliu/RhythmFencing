@@ -35,11 +35,9 @@ public static class BeatDetectionModel {
         }
     }
 
+    //generate specturm of the audio
     public static List<Point> initializeLineOfTheAudio(AudioSource currentAudio) {
         List<Point> song = new List<Point>();
-        //-------------------------manually pop beat information
-        //setupManually();
-        //------------------------------------------------------
         //automatically beat detection
         float[] samples = new float[currentAudio.clip.samples * currentAudio.clip.channels];
         //get the data into the samples array from start point 0
@@ -72,13 +70,15 @@ public static class BeatDetectionModel {
                 }
                 energySum += sum / (float)currentAudio.clip.channels;
             }
+            //only absolute value is important
             point.energy = Mathf.Abs((energySum / UserPref.SAMPLES_PER_POINT) * UserPref.SCALE);
             point.position = new Vector2(point.timeInSong, point.energy);
             song.Add(point);
         }
         return song;
     }
-    
+
+    //simplfy the specutrm using RamerDouglasPeucker
     public static void simplifyLine(ref List<Point> song) {
         List<int> indexsToKeep = new List<int>();
         List<Point> pointsToKeep = new List<Point>();
@@ -88,6 +88,7 @@ public static class BeatDetectionModel {
             song[indexsToKeep[i]].isSimplified = true;
     }
 
+    //find beats that has the energy higher than neighouers
     public static void findUpBeat(ref List<Point> song) {
         Point[] potentialBeats = song.Where(x => x.isSimplified == true).ToArray();
         for (int i = 0; i < potentialBeats.Length; i++){
@@ -105,6 +106,7 @@ public static class BeatDetectionModel {
         }
     }
 
+    //write all results from beat detection to a file
     public static void writeResult(AudioSource currentAudio, List<Point> currentSong) {
         string path = "/sdcard/Download/BeatDetetctionModelResult.txt";
 
@@ -153,14 +155,20 @@ public static class BeatDetectionModel {
         UnityEditor.AssetDatabase.ImportAsset(path);
 #endif
     }
+    //return a simplified version of the original polyline represented by the pointList, with the user defined threshold epsilon to the output
 
     private static void RamerDouglasPeucker(List<Point> pointList, float epsilon, ref List<Point> output) {
-
+        //if there are too less points to be simplified
         if (pointList == null || pointList.Count < 2)
             throw new ArgumentOutOfRangeException("Not enough points to simplify");
+
+        //local maxima magnitude
         double dmax = 0.0;
+        //index of the local maxima
         int index = 0;
+        //the end point of the line segment
         int end = pointList.Count - 1;
+        //find the point (local maxima) that is most away from the line segment
         for (int i = 1; i < end; i++) {
             double d = PerpendicularDistance(pointList[i], pointList[0], pointList[end]);
             if (d > dmax) {
@@ -169,6 +177,7 @@ public static class BeatDetectionModel {
             }
         }
 
+        //if the magnitude is greater than the  threshld, recursively simplify
         if (dmax > epsilon) {
             List<Point> recResults1 = new List<Point>();
             List<Point> recResults2 = new List<Point>();
@@ -179,13 +188,16 @@ public static class BeatDetectionModel {
             output.AddRange(recResults1.Take(recResults1.Count - 1));
             output.AddRange(recResults2);
             if (output.Count < 2) throw new Exception("Probelm assembling output");
-        } else {
+        } else
+        {
+            //otherwise only keeps the start and end point of the line segment
             output.Clear();
             output.Add(pointList[0]);
             output.Add(pointList[pointList.Count - 1]);
         }
     }
 
+    //calculate the idstance from a point to a line segment based on the equation of area of triangles
     private static double PerpendicularDistance(Point pt, Point lineStart, Point lineEnd)
     {
         double dx = lineEnd.timeInSong - lineStart.timeInSong;

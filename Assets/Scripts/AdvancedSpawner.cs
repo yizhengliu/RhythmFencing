@@ -11,7 +11,7 @@ using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class AdvancedSpawner : MonoBehaviour
-{
+{//references to unity game objects
     public AudioImporter importer;
     public GameObject hitEffect;
     public Light lightIndicator;
@@ -25,17 +25,29 @@ public class AdvancedSpawner : MonoBehaviour
     public Transform[] SpawnPoints;
     public Transform playerPos;
     private Transform destination;
+
+    //time counter for beat flash indicator
     private float indicatorFrameCount = 0;
     private struct Beat {
         public float timing;
         public int behaviour;
     }
+
+    //drive enemies based on the timing of the music beats with associated behaviour
     private Beat[] beats;
+    //beat counter, track which beat is emitted to enemies
     private int counter = 0;
+    //abstrct song spectrum 
     private List<BeatDetectionModel.Point> currentSong;
+    //in-game timer
     private float timer = 0;
+
+    //whether the beats are ready to be emitted
     private bool loaded = false;
+    //save flash timing to be emitted
     private float[] flashing;
+
+    //timer to check whether to trigger white flash or not
     private int lightCounter = 0;
     private struct Performance
     {
@@ -44,9 +56,16 @@ public class AdvancedSpawner : MonoBehaviour
         public float angle;
         public int category;
     }
+    //user performance
     private List<Performance> userPerformances = new List<Performance>();
+
+    //cooldown for each spawner
     private float[] spawnerCooldowns = new float[] { 1.5f, 1.5f, 1.5f, 1.5f };
+
+    //whether the flash will be triggred based on whether the enemy get the command
+    //if spawner is in cooldown then no flash
     private bool[] willFlash;
+    //initiate attributes
     private void Awake(){
         difficultySetting();
         currentAudio = GetComponent<AudioSource>();
@@ -55,6 +74,7 @@ public class AdvancedSpawner : MonoBehaviour
         destination = playerPos;
         
     }
+    //use import libray for runtime loading
     private void OnLoaded(AudioClip clip)
     {
         currentAudio.clip = clip;
@@ -64,6 +84,8 @@ public class AdvancedSpawner : MonoBehaviour
 
     private void FixedUpdate()
     {
+
+        //keep each flash at least 0.1s so the player can notice it 
         if (lightIndicator.enabled && lightIndicator.color == Color.white)
         {
             indicatorFrameCount += Time.deltaTime;
@@ -73,10 +95,12 @@ public class AdvancedSpawner : MonoBehaviour
                 lightIndicator.enabled = false;
             }
         }
+        //runtime loading 
         if (!importer.isDone)
         {
             loadingProgress.text = "Loading..." + (Mathf.Round(importer.progress * 1000) / 10) + "%";
         }
+        //go analysis the audio clip if have not done
         if (!loaded && importer.isDone)
         {
             Destroy(loadingCanvas);
@@ -90,6 +114,7 @@ public class AdvancedSpawner : MonoBehaviour
             //or using mannually set up 
             //setupManually();
         }
+        //if analysised
         if (loaded)
         {
             timer += Time.deltaTime;
@@ -109,6 +134,7 @@ public class AdvancedSpawner : MonoBehaviour
         }
     }
 
+    //generate random behaviour and save the reference for further usage
     private void addToBeats() {
         BeatDetectionModel.Point[] upBeats = currentSong.Where(x => x.isBeat == true).ToArray();
         beats = new Beat[upBeats.Length];
@@ -140,6 +166,7 @@ public class AdvancedSpawner : MonoBehaviour
     }
 
 
+    //set beat sheet meanually from a document
     private void setupManually() {
         TextAsset textAsset = Resources.Load("Labels 1") as TextAsset;
 
@@ -166,13 +193,17 @@ public class AdvancedSpawner : MonoBehaviour
             }
         }
     }
-   
+
+    //spawn enemy
     private void spawn() {
+
+        //trigger white flash
         if (lightCounter < flashing.Length && timer > flashing[lightCounter]) {
             if (willFlash[lightCounter])
                 lightIndicator.enabled = true;
             lightCounter++;
         }
+        //trigger enemy spawner
         if (counter < beats.Length && timer > beats[counter].timing)
         {
             List<int> possible = new List<int>();
@@ -199,6 +230,7 @@ public class AdvancedSpawner : MonoBehaviour
         }
     }
 
+    //based on the start menu choice, change the tolerance of the beat detection mmodel
     private void difficultySetting()
     {
         if (UserPref.DIFFICULTY_LEVEL == 0)
@@ -212,6 +244,7 @@ public class AdvancedSpawner : MonoBehaviour
 
     }
 
+    //based on user performance, update attributes
     public void Hit(double[] info)
     {
         int performance = (int)info[0];
@@ -266,7 +299,7 @@ public class AdvancedSpawner : MonoBehaviour
             np.category = performance;
             userPerformances.Add(np);
         }
-
+        //UI update
         Debug.Log("score: " + UserPref.SCORE);
         score.text = "Score: " + UserPref.SCORE;
         string addition = "MISSED";
@@ -331,6 +364,7 @@ public class AdvancedSpawner : MonoBehaviour
 #endif
     }
 
+    //spawn hit visual effect
     private void playHitEffect(int behaviour) {
         hitEffect.SendMessage("playHitEffect", behaviour);
     }

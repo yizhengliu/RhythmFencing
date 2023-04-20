@@ -1,3 +1,5 @@
+
+//user status that will be used accross different scenes
 public static class UserPref
 {
     public static float HP = 100;

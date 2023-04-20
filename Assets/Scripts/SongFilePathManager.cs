@@ -9,7 +9,7 @@ public class SongFilePathManager : MonoBehaviour
 {
     private Dropdown songFileNameDropDown;
     private List<string> filteredAudioFilePaths;
-    // Start is called before the first frame update
+    //add listener for the droplist
     void Start(){
         songFileNameDropDown = GetComponent<Dropdown>();
         addOptions(songFileNameDropDown);
@@ -18,6 +18,7 @@ public class SongFilePathManager : MonoBehaviour
             });
     }
 
+    //put all names of the clips from music file from user OS inside the dropdown
     private void addOptions(Dropdown dropdown) {
         
         Debug.Log(Application.persistentDataPath);
@@ -76,6 +77,7 @@ public class SongFilePathManager : MonoBehaviour
         UserPref.SONG_FILEPATH = filteredAudioFilePaths[dropdown.value];
     }
 
+    //when user selected a option from dropdown list
     private void onValueChanged(Dropdown dropdown){
         UserPref.SONG_FILEPATH = filteredAudioFilePaths[dropdown.value];
         Debug.Log("You have selected song: " + UserPref.SONG_FILEPATH);

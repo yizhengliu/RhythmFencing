@@ -34,6 +34,7 @@ public class AnimationStateControllerClassic : MonoBehaviour
             //if it is running
             //distance needs to be checked
             //if (Vector3.Distance(transform.position, destination.position) < 2.4273f)
+            //switch to slash animation
             if (Vector3.Distance(transform.position, destination.position) < 3f)
             {
                 startTime = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond;
@@ -74,6 +75,7 @@ public class AnimationStateControllerClassic : MonoBehaviour
         Hit(new double[] { 0 });
         Destroy(this.gameObject);
     }
+    //track the timing of the attack frame
     public void actionPerformed(int animationType) {
         string at_ = behaviour == 0 ? "Another Slash" : "Normal Slash";
         long result = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond - startTime;
@@ -129,6 +131,7 @@ public class AnimationStateControllerClassic : MonoBehaviour
         }
     }
 
+    //vibrate controllers
     private void vibration(int iteration, int frequency, int strength, bool isLeft)
     {
         int temp = strength;
@@ -140,12 +143,14 @@ public class AnimationStateControllerClassic : MonoBehaviour
         else
             OVRHaptics.RightChannel.Preempt(hapticsClip);
     }
+    //spawn visual effects
     private void spawnEffect() {
         int r = Random.Range(0, 3);
         GameObject newEffect = Instantiate(visualHitEffect[r]);
         newEffect.transform.position = collisionPos;
         newEffect.transform.LookAt(Camera.main.transform);
     }
+    //transfer the collision point
     public void passPos(Vector3 cep) {
         collisionPos = cep;
     }
