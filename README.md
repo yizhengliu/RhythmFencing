@@ -21,3 +21,5 @@ another library is used in different scenes.
 ### [Player Swords](https://assetstore.unity.com/packages/3d/props/weapons/long-sword-212082)
 
 ### [Oculus embedded audios](https://dova-s.jp/bgm/)
+
+### [3D enemy model and animation](https://www.mixamo.com/)
