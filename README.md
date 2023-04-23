@@ -4,6 +4,7 @@ For both versions, Oculus integration package needs to be re-imported from asset
 
 ## [Oculus version](https://github.com/yizhengliu/RhythmFencing/tree/oculus-product)
 Audios are embedded, low poly background and low quality texture is used to build apk version of the game.  
+The apk file of the game can be find in the link at the initial directory (should be the last one)
 ## [PC version](https://github.com/yizhengliu/RhythmFencing/tree/PC-final-product)
 Runtime audio loading with high detailed background and full quality texture.
 PC version needs to use oculus link.
